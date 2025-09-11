@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/encontros.css">
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center" href="../html/encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Presença</a></li>
+            </ul>
+        </div>
+        <div class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 text-white">Coordenador</span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none" onclick="sair()">Sair</button>
+            <a href="login.html" class="btn btn-light branco-hover w-75 mx-auto" onclick="logar()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </a>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="container-head d-flex align-items-center justify-content-between mb-2">
+            <h1 class="fs-2">Encontros</h1>
+            <a href="cadastrarEditarEncontro.html" id="btn-cadastrar" class="btn vermelho vermelho-hover text-white d-none">Cadastrar Encontro</a>
+        </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="cardContainer"></div>
+    </div>
+
+    <div class="modal fade" id="modalCancelar" tabindex="-1" aria-labelledby="modalCancelarLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCancelarLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">Deseja cancelar este encontro?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn vermelho vermelho-hover text-white" id="confirmarCancelar">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../scripts/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

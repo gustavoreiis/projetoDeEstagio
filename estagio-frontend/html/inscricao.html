@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/encontros.css">
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center"
+                        href="../html/encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Presença</a></li>
+            </ul>
+        </div>
+        <div
+            class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 d-none text-white"></span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none">Sair</button>
+            <button class="btn btn-light branco-hover w-75 mx-auto" onclick="logar()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalIdentificacao" tabindex="-1" aria-labelledby="modalCancelarLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="modalForm" autocomplete="off">
+                        <div class="mb-3">
+                            <label for="modalCpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control cpf" id="modalCpf" maxlength="14" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modalNascimento" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="modalNascimento" required>
+                        </div>
+                        <button type="submit" class="btn vermelho vermelho-hover text-white w-100">Continuar</button>
+                    </form>
+                    <div id="erro" class="alert alert-danger d-none mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalErro" tabindex="-1" aria-labelledby="modalErroLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header vermelho text-white">
+                    <h5 class="modal-title" id="modalErroLabel">Erro</h5>
+                </div>
+                <div class="modal-body" id="modalErroMensagem">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn vermelho vermelho-hover text-white"
+                        data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4 class="mb-0 fw-bold">Formulário de Inscrição</h4>
+            </div>
+            <div class="card-body">
+                <form id="form-inscricao" autocomplete="off">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control cpf" id="cpf" maxlength="14" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="telefone" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label for="endereco" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="endereco" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="nascimento" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="nascimento" required>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select id="tipo" class="form-select" required>
+                                <option selected disabled value="">Selecione</option>
+                                <option value="PARTICIPANTE">Participante</option>
+                                <option value="SERVO">Servo</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="genero" class="form-label">Gênero</label>
+                            <select id="genero" class="form-select" required>
+                                <option selected disabled value="">Selecione</option>
+                                <option value="MASCULINO">Masculino</option>
+                                <option value="FEMININO">Feminino</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label for="observacao" class="form-label">Observações</label>
+                            <textarea placeholder="Digite aqui suas observações..." class="form-control"
+                                id="observacao"></textarea>
+                        </div>
+
+                        <div id="campos-servo" class="col-12 d-none">
+                            <hr>
+                            <h5 class="text-center mb-3 fw-bold">Informações do Servo</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="ministerio" class="form-label" >Ministério</label>
+                                    <select name="ministerio" id="ministerio" class="form-select">
+                                        <option selected disabled value="">Selecione</option>
+                                        <option value="ARTES">Artes</option>
+                                        <option value="COMUNICACAO_SOCIAL">Comunicação Social</option>
+                                        <option value="INTERCESSAO">Intercessão</option>
+                                        <option value="MUSICA">Música</option>
+                                        <option value="PREGACAO">Pregação</option>
+                                        <option value="PROMOCAO_HUMANA">Promoção Humana</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-none" id="campos-responsavel">
+                            <hr>
+                            <h5 class="text-center mb-3 fw-bold">Informações do Responsável</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="responsavelNome" class="form-label">Nome do Responsável</label>
+                                    <input type="text" class="form-control" id="responsavelNome">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="responsavelCpf" class="form-label">CPF do Responsável</label>
+                                    <input type="text" class="form-control cpf" id="responsavelCpf" maxlength="14">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="responsavelTelefone" class="form-label">Telefone do Responsável</label>
+                                    <input type="tel" class="form-control" id="responsavelTelefone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button type="submit" class="btn vermelho vermelho-hover text-white">Enviar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+        <div id="toastSucesso" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Inscrição realizada com sucesso!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Fechar"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/inscricao.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+#corGrupo {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}

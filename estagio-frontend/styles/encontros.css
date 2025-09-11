@@ -1,0 +1,10 @@
+.usuario-logado.coordenador .card-encontro:hover .btn-cancelar {
+  display: inline-flex !important;
+  background-color: #ffffff;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+}

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/cadastrarEditarEncontro.css">
+    <link rel="icon" type="image/png" href="/images/logo.jpg">
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center"
+                        href="../html/encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Presença</a></li>
+            </ul>
+        </div>
+        <div
+            class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 d-none text-white"></span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none" onclick="sair()">Sair</button>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="card shadow">
+            <div class="card-header">
+                <h4 id="titulo-form" class="mb-0">Cadastrar Novo Encontro</h4>
+            </div>
+            <form id="form-encontro" enctype="multipart/form-data" autocomplete="off">
+                <input type="hidden" id="idEncontro" name="idEncontro">
+                <div class="row p-3">
+                    <div class="col-12 col-md-8">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Nome do Encontro</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="dataHoraInicio" class="form-label">Data Início</label>
+                                <input type="datetime-local" class="form-control" id="dataHoraInicio"
+                                    name="dataHoraInicio" required>
+                            </div>
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="dataHoraFim" class="form-label">Data Encerramento</label>
+                                <input type="datetime-local" class="form-control" id="dataHoraFim" name="dataHoraFim"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="local" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="local" name="local" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="preco" class="form-label">Preço</label>
+                                <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="0"
+                                    required>
+                            </div>
+                            <div class="col-12 col-md-6 mb-3">
+                                <label for="capa" class="form-label">Capa</label>
+                                <input class="form-control vermelho-border" type="file" id="capa" name="capa" required accept="image/*"
+                                    onchange="previewImage(event)">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="4"
+                                maxlength="1000"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4 d-flex flex-column justify-content-between">
+                        <div class="mb-3">
+                            <img id="preview" class="img-preview" alt="Pré-visualização da Imagem">
+                        </div>
+                        <div class="text-end">
+                            <button id="btn-salvar" type="submit" class="btn vermelho vermelho-hover text-white me-2">
+                                Cadastrar
+                            </button>
+                            <a href="encontros.html" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="modal fade" id="modalErroData" tabindex="-1" aria-labelledby="modalErroDataLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="modalErroDataLabel">Erro</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="mensagemErroData"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../scripts/cadastrarEncontro.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

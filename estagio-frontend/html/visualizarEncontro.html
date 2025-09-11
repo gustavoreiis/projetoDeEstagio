@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/visualizarEncontro.css">
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center"
+                        href="../html/encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Presença</a></li>
+            </ul>
+        </div>
+        <div
+            class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 d-none text-white"></span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none" onclick="sair()">Sair</button>
+            <button class="btn btn-light branco-hover w-75 mx-auto" onclick="logar()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </div>
+    </div>
+
+    <div class="container my-3 rounded shadow-lg bg-white pb-2">
+        <div class="capa mb-2">
+            <img src="" alt="Capa do Encontro" id="imagem-encontro" class="mt-3">
+        </div>
+        <div class="descricao w-90 mx-auto">
+            <h1 id="titulo-encontro" class="fs-3"></h1>
+            <p id="descricao-encontro" class="text-justify fs-8"></p>
+        </div>
+        <div class="row w-100 mx-auto pb-3 gx-3 px-3">
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="data d-flex align-items-center bg-transparent vermelho-border rounded p-2 h-100">
+                    <i class="bi bi-calendar bi-informacoes"></i>
+                    <div>
+                        <h5 class="info-titulo">Data</h5>
+                        <p id="data-inicio-encontro" class="data-inicio m-0"></p>
+                        <p id="data-fim-encontro" class="data-fim m-0"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="local d-flex align-items-center bg-transparent vermelho-border rounded p-2 h-100">
+                    <i class="bi bi-geo-alt-fill bi-informacoes"></i>
+                    <div>
+                        <h5 class="info-titulo">Local</h5>
+                        <p id="local-encontro"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="preco d-flex align-items-center bg-transparent vermelho-border rounded p-2 h-100">
+                    <i class="bi bi-currency-dollar bi-informacoes"></i>
+                    <div>
+                        <h5 class="info-titulo">Preço</h5>
+                        <p id="preco-encontro"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="inscricao.html" id="btn-inscricao" class="btn vermelho vermelho-hover text-white">Fazer
+                Inscrição</a>
+        </div>
+        <hr class="d-none" id="hr-acoes">
+        <div class="mt-4 d-none" id="acoes-encontro">
+            <h4 class="text-center mb-3">Ações</h4>
+            <div class="row gx-3">
+                <div class="col-12 col-md-4">
+                    <a href="#" class="btn vermelho vermelho-hover text-white w-100 mb-2">Participantes</a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <a onclick="abrirGrupos()" class="btn vermelho vermelho-hover text-white w-100 mb-2">Grupos</a>
+                </div>
+                <div class="col-12 col-md-4">
+                    <button id="botao-editar" class="btn vermelho vermelho-hover text-white w-100 mb-2"
+                        onclick="editarEncontro()">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/visualizarEncontro.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
