@@ -45,6 +45,7 @@ public class PessoaGrupoService {
     }
 
     public List<ParticipanteDto> listarParticipantesSemGrupo(Long idEncontro) {
+        System.out.println("Testeeeeee: " + idEncontro);
         Encontro encontro = encontroRepository.findById(idEncontro)
                 .orElseThrow(() -> new RuntimeException("Encontro não encontrado"));
 
