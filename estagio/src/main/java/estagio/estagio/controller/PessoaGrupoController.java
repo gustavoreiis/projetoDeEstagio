@@ -2,10 +2,12 @@ package estagio.estagio.controller;
 
 import estagio.estagio.Service.PessoaGrupoService;
 import estagio.estagio.dto.ParticipanteDto;
+import estagio.estagio.entity.PessoaGrupo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -30,5 +32,11 @@ public class PessoaGrupoController {
     public ResponseEntity<List<ParticipanteDto>> listarParticipantesSemGrupo(@PathVariable Long idEncontro) {
         List<ParticipanteDto> listaParticipantes = pessoaGrupoService.listarParticipantesSemGrupo(idEncontro);
         return ResponseEntity.ok(listaParticipantes);
+    }
+
+    @PostMapping("/{idParticipante}/{idGrupo}")
+    public ResponseEntity<PessoaGrupo> adicionarParticipante(@PathVariable Long idParticipante, @PathVariable Long idGrupo) {
+        PessoaGrupo pessoaGrupo = pessoaGrupoService.adicionarPessoa(idParticipante, idGrupo);
+        return ResponseEntity.ok(pessoaGrupo);
     }
 }

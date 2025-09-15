@@ -45,7 +45,6 @@ public class PessoaGrupoService {
     }
 
     public List<ParticipanteDto> listarParticipantesSemGrupo(Long idEncontro) {
-        System.out.println("Testeeeeee: " + idEncontro);
         Encontro encontro = encontroRepository.findById(idEncontro)
                 .orElseThrow(() -> new RuntimeException("Encontro não encontrado"));
 
@@ -56,18 +55,17 @@ public class PessoaGrupoService {
 
 
 
-    public PessoaGrupo adicionarPessoa(Long idGrupo, Long idPessoa, boolean lider) {
+    public PessoaGrupo adicionarPessoa(Long idPessoa, Long idGrupo) {
         Pessoa pessoa = pessoaRepository.findById(idPessoa)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada."));
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new RuntimeException("Grupo não encontrado."));
 
-        // Verificar quantidade de líderes no grupo
 
         PessoaGrupo pessoaGrupo = PessoaGrupo.builder()
                 .pessoa(pessoa)
                 .grupo(grupo)
-                .lider(lider)
+                .lider(false)
                 .build();
         return pessoaGrupoRepository.save(pessoaGrupo);
     }
