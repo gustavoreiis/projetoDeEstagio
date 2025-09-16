@@ -113,10 +113,12 @@ async function carregarGrupos() {
           </div>
           <div class="card-body">
             <p class="card-text"><strong>Líderes:</strong> ${lideres}</p>
-            <p class="card-text"><strong>${grupo.quantidadeParticipantes} participantes</strong></p>
+            <p class="card-text">${grupo.quantidadeParticipantes} participantes</p>
           </div>
-          <div class="card-footer text-center">
-            <a class="btn btn-light btn-sm border" onclick="abrirModalParticipantes(${grupo.id})">Gerenciar Grupo</a>
+          <div class="card-footer text-center d-flex justify-content-around">
+            <a class="btn btn-light btn-sm border" onclick="abrirModalVisualizarParticipantes(${grupo.id})">Visualizar Participantes</a>
+            <a class="btn vermelho vermelho-hover text-white btn-sm border" onclick="abrirModalAdicionarParticipantes(${grupo.id})">Adicionar</a>
+            
           </div>
         </div>
       `;
@@ -276,42 +278,131 @@ async function editarGrupo(idGrupo) {
   }
 }
 
-const modalParticipantes = document.getElementById("modalParticipantes");
-let grupoAtual = null;
+const modalAdicionarParticipantes = document.getElementById("modalAdicionarParticipantes");
 
-async function abrirModalParticipantes(idGrupo) {
-  grupoAtual = idGrupo;
-
-  const response = await fetch(`http://localhost:8080/participantes-grupos/${idGrupo}`);
+async function abrirModalAdicionarParticipantes(idGrupo) {
+  const response = await fetch(`http://localhost:8080/participantes-grupos/encontro/${idEncontro}`);
   const participantes = await response.json();
 
-  const listaParticipantes = document.getElementById("listaParticipantes");
-  listaParticipantes.innerHTML = "";
+  const listaAdicionar = document.getElementById("listaAdicionarParticipantes");
+  const campoPesquisa = document.getElementById("pesquisaParticipante");
+  campoPesquisa.value = "";
+
+  if (participantes.length === 0) {
+    listaAdicionar.innerHTML = '<li class="list-group-item text-center">Nenhum participante disponível para adicionar.</li>';
+    new bootstrap.Modal(modalAdicionarParticipantes).show();
+    return;
+  }
+
+  function gerarLista(filtro = "") {
+    listaAdicionar.innerHTML = "";
+
+    participantes
+      .filter(p => p.nome.toLowerCase().includes(filtro.toLowerCase()))
+      .forEach(participante => {
+        const item = document.createElement("li");
+        item.className = "list-group-item d-flex justify-content-between align-items-center";
+
+        const spanNome = document.createElement("span");
+        spanNome.textContent = participante.nome;
+
+        const botaoAdicionar = document.createElement("button");
+        botaoAdicionar.textContent = "Adicionar";
+        botaoAdicionar.className = "btn vermelho vermelho-hover text-white btn-sm";
+
+        botaoAdicionar.onclick = () => {
+          botaoAdicionar.disabled = true;
+          adicionarParticipante(participante.id, idGrupo)
+        };
+
+        item.appendChild(spanNome);
+        item.appendChild(botaoAdicionar);
+        listaAdicionar.appendChild(item);
+      });
+  }
+  gerarLista();
+
+  campoPesquisa.oninput = () => gerarLista(campoPesquisa.value);
+
+  new bootstrap.Modal(modalAdicionarParticipantes).show();
+}
+
+modalAdicionarParticipantes.addEventListener('hidden.bs.modal', () => {
+  carregarGrupos();
+});
+
+async function adicionarParticipante(idParticipante, idGrupo) {
+  try {
+    const response = await fetch(`http://localhost:8080/participantes-grupos/${idParticipante}/${idGrupo}`, {
+      method: "POST"
+    });
+
+    if (response.ok) {
+      console.log("Participante adicionado com sucesso.");
+    } else {
+      const error = await response.json();
+      console.error("Erro ao adicionar participante:", error);
+    }
+  } catch (error) {
+    console.error("Erro ao adicionar participante:", error);
+  }
+}
+
+const modalVisualizarParticipantes = document.getElementById("modalVisualizarParticipantes");
+async function abrirModalVisualizarParticipantes(idGrupo) {
+  const response = await fetch(`http://localhost:8080/participantes-grupos/${idGrupo}`)
+  const participantes = await response.json();
+  const textoNenhumParticipante = document.getElementById("mensagemNenhumParticipante");
+  const boataoAdicionar = document.getElementById("botaoAdicionarModalVisualizar");
+  textoNenhumParticipante.classList.add("d-none");
+  boataoAdicionar.classList.add("d-none");
+
+  const listaVisualizar = document.getElementById("listaVisualizarParticipantes");
+  listaVisualizar.innerHTML = "";
+
+  if (participantes.length === 0) {
+    const item = document.createElement("li");
+    item.className = "list-group-item";
+    boataoAdicionar.setAttribute("onclick", `
+  bootstrap.Modal.getInstance(document.getElementById('modalVisualizarParticipantes')).hide();
+  abrirModalAdicionarParticipantes(${idGrupo});
+`);
+    boataoAdicionar.classList.remove("d-none");
+    textoNenhumParticipante.classList.remove("d-none");
+  }
 
   participantes.forEach(participante => {
-
     const item = document.createElement("li");
     item.className = "list-group-item d-flex justify-content-between align-items-center";
-
     const spanNome = document.createElement("span");
     spanNome.textContent = participante.nome;
 
     const iconeRemover = document.createElement("i");
     iconeRemover.className = "bi bi-x-lg text-danger";
     iconeRemover.style.cursor = "pointer";
-
-    iconeRemover.onclick = async () => {
-      //remover participante
-      console.log('teste')
-    }
+    iconeRemover.onclick = async () => removerParticipante(participante.id, idGrupo);
 
     item.appendChild(spanNome);
     item.appendChild(iconeRemover);
-    listaParticipantes.appendChild(item);
-  })
 
-  new bootstrap.Modal(modalParticipantes).show();
+    listaVisualizar.appendChild(item);
+  });
+
+  const modal = bootstrap.Modal.getOrCreateInstance(modalVisualizarParticipantes);
+  modal.show();
 }
 
-
-
+async function removerParticipante(idParticipante, idGrupo) {
+  try {
+    const response = await fetch(`http://localhost:8080/participantes-grupos/${idParticipante}/${idGrupo}`, {
+      method: "DELETE"
+    });
+    if (response.ok) {
+      abrirModalVisualizarParticipantes(idGrupo);
+      carregarGrupos();
+    }
+  }
+  catch (error) {
+    console.error("Erro ao remover participante:", error);
+  }
+}

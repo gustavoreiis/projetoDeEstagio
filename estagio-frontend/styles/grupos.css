@@ -2,7 +2,16 @@
     padding: 0;
     height: 40px;
     width: 40px;
-    border: none;
+    border: none !important;
     border-radius: 50%;
     cursor: pointer;
+}
+
+#corGrupo:focus {
+    box-shadow: none;
+}
+
+#listaAdicionarParticipantes {
+  max-height: 60vh;
+  overflow-y: auto;
 }

@@ -14,6 +14,7 @@ public interface PessoaGrupoRepository extends JpaRepository<PessoaGrupo, Long> 
     boolean existsByPessoaIdAndGrupoEncontroIdAndLiderTrue(Long idPessoa, Long idGrupo);
     List<PessoaGrupo> findByGrupoIdAndLiderFalse(Long idGrupo);
     void deleteByGrupoId(Long idGrupo);
+    PessoaGrupo findByPessoaIdAndGrupoId(Long idPessoa, Long idGrupo);
 
     @Query(value = "SELECT p.id_pessoa AS idPessoa, p.nome AS nome " +
             "FROM pessoas p " +

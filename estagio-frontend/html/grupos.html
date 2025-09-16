@@ -127,33 +127,28 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn vermelho vermelho-hover text-white" id="btnSalvarGrupo">Salvar
-                        Grupo</button>
+                    <button type="submit" class="btn vermelho vermelho-hover text-white" id="btnSalvarGrupo">Salvar Grupo</button>
                 </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalParticipantes">
+    <div class="modal fade" id="modalAdicionarParticipantes">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalParticipantesLabel">Participantes do Grupo</h5>
+                    <h5 class="modal-title" id="modalAdicionarParticipantesLabel">Adicionar Participantes</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="d-flex gap-2 mb-3">
-                        <select id="selectPessoa" class="form-select">
-                            <option value="">Selecione uma pessoa</option>
-                        </select>
-                        <button class="btn vermelho vermelho-hover text-white" data-bs-dismiss="modal">Adicionar</button>
+                        <input type="text" id="pesquisaParticipante" class="form-control" placeholder="Buscar participante">
                     </div>
 
-                    <h6>Participantes do grupo</h6>
-                    <ul id="listaParticipantes" class="list-group md-3"></ul>
+                    <ul id="listaAdicionarParticipantes" class="list-group md-3"></ul>
                 </div>
 
                 <div class="modal-footer">
@@ -165,6 +160,31 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalVisualizarParticipantes">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVisualizarParticipantesLabel">Visualizar Participantes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <ul class="list-group md-3" id="listaVisualizarParticipantes">
+                        
+                    </ul>
+                    <p class="text-center d-none" id="mensagemNenhumParticipante">Nenhum participante cadastrado no grupo.</p>
+                        <div class="d-flex justify-content-center align-items-center d-none" id="botaoAdicionarModalVisualizar">
+                            <a class="btn vermelho vermelho-hover text-white btn-sm border">Adicionar Participantes</a>
+                        </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -172,7 +192,7 @@
                     <h5 class="modal-title" id="modalExcluirLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body">Deseja excluir esse grupo?</div>
+                <div class="modal-body">Deseja excluir esse grupo? Todos os participantes do grupo serão removidos.</div>
                 <div class="modal-footer">
                     <button type="button" class="btn" data-bs-dismiss="modal">Fechar</button>
                     <button type="button" class="btn vermelho vermelho-hover text-white"

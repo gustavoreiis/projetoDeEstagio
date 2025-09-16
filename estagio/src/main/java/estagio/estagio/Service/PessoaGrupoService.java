@@ -53,14 +53,11 @@ public class PessoaGrupoService {
         return listaPessoas;
     }
 
-
-
     public PessoaGrupo adicionarPessoa(Long idPessoa, Long idGrupo) {
         Pessoa pessoa = pessoaRepository.findById(idPessoa)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada."));
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new RuntimeException("Grupo não encontrado."));
-
 
         PessoaGrupo pessoaGrupo = PessoaGrupo.builder()
                 .pessoa(pessoa)
@@ -70,10 +67,8 @@ public class PessoaGrupoService {
         return pessoaGrupoRepository.save(pessoaGrupo);
     }
 
-    public void removerPessoa(Long idPessoaGrupo) {
-        PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findById(idPessoaGrupo)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada no grupo."));
-
+    public void removerPessoa(Long idParticipante, Long idGrupo) {
+        PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findByPessoaIdAndGrupoId(idParticipante, idGrupo);
         pessoaGrupoRepository.delete(pessoaGrupo);
     }
 
