@@ -1,7 +1,6 @@
 package estagio.estagio.Service;
 
 import estagio.estagio.dto.ParticipanteDto;
-import estagio.estagio.entity.Encontro;
 import estagio.estagio.entity.Grupo;
 import estagio.estagio.entity.Pessoa;
 import estagio.estagio.entity.PessoaGrupo;
@@ -30,8 +29,9 @@ public class PessoaGrupoService {
     }
 
     public List<ParticipanteDto> listarParticipantesDoGrupo(Long idgrupo) {
-        Grupo grupo = grupoRepository.findById(idgrupo)
-                .orElseThrow(() -> new RuntimeException("Grupo no encontrado"));
+        if (grupoRepository.findById(idgrupo).isEmpty()) {
+            throw new RuntimeException("Grupo não encontrado");
+        }
 
         List<PessoaGrupo> listaPessoaGrupo = pessoaGrupoRepository.findByGrupoIdAndLiderFalse(idgrupo);
         List<ParticipanteDto> listaParticipantes = new ArrayList<>();
@@ -45,12 +45,11 @@ public class PessoaGrupoService {
     }
 
     public List<ParticipanteDto> listarParticipantesSemGrupo(Long idEncontro) {
-        Encontro encontro = encontroRepository.findById(idEncontro)
-                .orElseThrow(() -> new RuntimeException("Encontro não encontrado"));
+        if (encontroRepository.findById(idEncontro).isEmpty()) {
+            throw new RuntimeException("Encontro não encontrado");
+        }
 
-        List<ParticipanteDto> listaPessoas = pessoaGrupoRepository.findParticipantesSemGrupo(idEncontro);
-
-        return listaPessoas;
+        return pessoaGrupoRepository.findParticipantesSemGrupo(idEncontro);
     }
 
     public PessoaGrupo adicionarPessoa(Long idPessoa, Long idGrupo) {
