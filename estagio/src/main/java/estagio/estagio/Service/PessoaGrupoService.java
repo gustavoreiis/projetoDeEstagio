@@ -71,26 +71,4 @@ public class PessoaGrupoService {
         PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findByPessoaIdAndGrupoId(idParticipante, idGrupo);
         pessoaGrupoRepository.delete(pessoaGrupo);
     }
-
-    public PessoaGrupo definirLider(Long idPessoaGrupo) {
-        PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findById(idPessoaGrupo)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada no grupo."));
-
-        // Verificar quantidade de líderes no grupo
-
-        pessoaGrupo.setLider(true);
-        return pessoaGrupoRepository.save(pessoaGrupo);
-    }
-
-    public PessoaGrupo removerLider(Long idPessoaGrupo) {
-        PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findById(idPessoaGrupo)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada no grupo."));
-
-        pessoaGrupo.setLider(false);
-        return pessoaGrupoRepository.save(pessoaGrupo);
-    }
-
-    public List<PessoaGrupo> buscarPessoasGrupo(Long idGrupo) {
-        return pessoaGrupoRepository.findByGrupoId(idGrupo);
-    }
 }

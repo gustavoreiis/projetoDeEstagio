@@ -70,8 +70,8 @@ public class EncontroController {
     }
 
     @DeleteMapping("/{idEncontro}")
-    public ResponseEntity<Void> deleteEncontroById(@PathVariable String idEncontro) {
-        encontroService.excluirEncontro(idEncontro);
+    public ResponseEntity<Void> deleteEncontroById(@PathVariable Long idEncontro) {
+        encontroService.deletarEncontro(idEncontro);
         return ResponseEntity.noContent().build();
     }
 }

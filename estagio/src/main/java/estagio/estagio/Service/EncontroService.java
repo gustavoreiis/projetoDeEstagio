@@ -1,26 +1,34 @@
 package estagio.estagio.Service;
 
 import estagio.estagio.entity.Encontro;
+import estagio.estagio.entity.Grupo;
 import estagio.estagio.repository.EncontroRepository;
+import estagio.estagio.repository.GrupoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class EncontroService {
 
     private final EncontroRepository encontroRepository;
+    private final GrupoRepository grupoRepository;
+    private final GrupoService grupoService;
     private final String uploadDir = "uploads"; // Pasta de destino
 
-    public EncontroService(EncontroRepository encontroRepository) {
+    public EncontroService(GrupoService grupoService, EncontroRepository encontroRepository, GrupoRepository grupoRepository) {
+        this.grupoService = grupoService;
         this.encontroRepository = encontroRepository;
+        this.grupoRepository = grupoRepository;
     }
 
     public Encontro criarEncontro(String titulo, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String local, float preco, String descricao, MultipartFile capa) {
@@ -37,25 +45,7 @@ public class EncontroService {
             String caminhoCapa = salvarArquivo(capa);
             encontro.setCapa(caminhoCapa);
         }
-
         return encontroRepository.save(encontro);
-    }
-
-    public String salvarArquivo(MultipartFile arquivo) {
-        Path pastaUploads = Paths.get(System.getProperty("user.dir"), "imagens");
-        try {
-            if (!Files.exists(pastaUploads)) {
-                Files.createDirectories(pastaUploads);
-            }
-            String nomeArquivo = System.currentTimeMillis() + "_" + arquivo.getOriginalFilename();
-            Path arquivoDestino = pastaUploads.resolve(nomeArquivo);
-            arquivo.transferTo(arquivoDestino.toFile());
-
-
-            return "http://localhost:8080/imagens/" + nomeArquivo;
-        } catch (IOException e) {
-            throw new RuntimeException("Falha ao salvar o arquivo.", e);
-        }
     }
 
     public java.util.Optional<Encontro> buscarEncontroPorId(Long idEncontro) {
@@ -78,7 +68,6 @@ public class EncontroService {
         Encontro encontro = encontroRepository.findById(idEncontro)
                 .orElseThrow(() -> new EntityNotFoundException("Encontro não encontrado"));
 
-        // Atualiza campos básicos
         encontro.setTitulo(titulo);
         encontro.setDescricao(descricao);
         encontro.setDataHoraInicio(dataHoraInicio);
@@ -86,44 +75,51 @@ public class EncontroService {
         encontro.setLocal(local);
         encontro.setPreco(preco);
 
-        // Atualiza imagem só se veio no request
         if (capa != null && !capa.isEmpty()) {
+            deletarArquivo(encontro.getCapa());
             String caminhoImagem = salvarArquivo(capa);
             encontro.setCapa(caminhoImagem);
         }
-
         return encontroRepository.save(encontro);
     }
 
-    public void excluirEncontro(String idEncontro) {
-        Optional<Encontro> encontroRemover = encontroRepository.findById(Long.parseLong(idEncontro));
-        if (encontroRemover.isPresent()) {
-            Encontro encontro = encontroRemover.get();
+    public void deletarEncontro(Long idEncontro) {
+        Encontro encontro = encontroRepository.findById(idEncontro)
+                .orElseThrow(() -> new RuntimeException("Encontro não encontrado."));
+        List<Grupo> grupos = grupoRepository.findByEncontroId(idEncontro);
 
-            Path pastaUploads = Paths.get(System.getProperty("user.dir"), "imagens");
+        deletarArquivo(encontro.getCapa());
+        for (Grupo grupo : grupos) {
+            grupoService.deletarGrupo(grupo.getId());
+        }
+        encontroRepository.delete(encontro);
+    }
 
-            try {
-                // Extrai somente o nome do arquivo da URL
-                String url = encontro.getCapa();
-                String nomeArquivo;
+    public void deletarArquivo(String urlImagem) {
+        try {
+            String nomeArquivo = urlImagem.substring(urlImagem.lastIndexOf("/") + 1);
+            nomeArquivo = URLDecoder.decode(nomeArquivo, StandardCharsets.UTF_8);
 
-                // Verifica se a URL contém '/imagens/' e extrai o nome do arquivo
-                if (url.contains("/imagens/")) {
-                    nomeArquivo = url.substring(url.lastIndexOf("/") + 1);
-                } else {
-                    nomeArquivo = url; // fallback: assume que o campo já é só o nome do arquivo
-                }
+            Path caminhoArquivo = Paths.get(System.getProperty("user.dir"), "imagens", nomeArquivo);
+            Files.deleteIfExists(caminhoArquivo);
+        } catch (Exception e) {
+            System.out.println("Erro ao deletar imagem: " + e.getMessage());
+        }
+    }
 
-                Path caminhoImagem = pastaUploads.resolve(nomeArquivo);
-
-                Files.deleteIfExists(caminhoImagem);
-            } catch (Exception e) {
-                System.err.println("Erro ao excluir imagem: " + e.getMessage());
+    public String salvarArquivo(MultipartFile arquivo) {
+        Path pastaUploads = Paths.get(System.getProperty("user.dir"), "imagens");
+        try {
+            if (!Files.exists(pastaUploads)) {
+                Files.createDirectories(pastaUploads);
             }
+            String nomeArquivo = System.currentTimeMillis() + "_" + arquivo.getOriginalFilename();
+            Path arquivoDestino = pastaUploads.resolve(nomeArquivo);
+            arquivo.transferTo(arquivoDestino.toFile());
 
-            encontroRepository.deleteById(encontro.getId());
-        } else {
-            System.err.println("Encontro não encontrado.");
+            return "http://localhost:8080/imagens/" + nomeArquivo;
+        } catch (IOException e) {
+            throw new RuntimeException("Falha ao salvar o arquivo.", e);
         }
     }
 }
