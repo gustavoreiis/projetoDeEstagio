@@ -71,4 +71,5 @@ public class PessoaGrupoService {
         PessoaGrupo pessoaGrupo = pessoaGrupoRepository.findByPessoaIdAndGrupoId(idParticipante, idGrupo);
         pessoaGrupoRepository.delete(pessoaGrupo);
     }
+    
 }
