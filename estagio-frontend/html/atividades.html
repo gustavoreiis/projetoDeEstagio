@@ -56,8 +56,7 @@
 
     <div class="container mt-4">
         <div class="container-head d-flex justify-content-between">
-            <h1 id="titulo" class="fs-2 m-0">Gerenciamento de Atividades</h1>
-
+            <h1 id="titulo" class="fs-2 m-0">Atividades</h1>
             <button class="btn vermelho vermelho-hover text-white align-self-center" id="btn-adicionar"
                 onclick="abrirModalCriar()">Criar Atividade</button>
         </div>
@@ -96,7 +95,19 @@
                         </div>
                     </form>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn vermelho vermelho-hover text-white" id="btnSalvarAtividade">Salvar
+                        Atividade</button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <a class="btn" data-bs-toggle="collapse" href="#pesquisaCollapse"><i id="iconeCollapse" class="bi bi-caret-down-fill"></i>Pesquisar</a>
+        <div class="collapse" id="pesquisaCollapse">
+            <p>teste</p>
         </div>
     </div>
 
