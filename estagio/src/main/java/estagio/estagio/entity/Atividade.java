@@ -23,7 +23,6 @@ public class Atividade {
     @Column(name = "data_atividade")
     private Date dataAtividade;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pessoa_grupo")
-    private PessoaGrupo pessoaGrupo;
+    @Column(name = "grupo_pessoas")
+    private String grupoDePessoas;
 }

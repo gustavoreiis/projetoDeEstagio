@@ -30,7 +30,6 @@ public class GrupoService {
     private PessoaGrupoRepository pessoaGrupoRepository;
 
     public Grupo criarGrupo(GrupoDto grupoDto) {
-        System.out.println(grupoDto.getIdEncontro());
         Encontro encontro = encontroRepository.findById(grupoDto.getIdEncontro())
                 .orElseThrow(() -> new RuntimeException("Encontro não encontrado"));
 
