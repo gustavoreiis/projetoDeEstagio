@@ -13,3 +13,7 @@ collapse.addEventListener('hidden.bs.collapse', () => {
     icone.classList.remove('bi-caret-up-fill');
     icone.classList.add('bi-caret-down-fill');
 });
+
+async function carregarAtividades() {
+    
+}

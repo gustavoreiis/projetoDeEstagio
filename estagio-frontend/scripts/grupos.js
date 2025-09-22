@@ -184,6 +184,7 @@ function abrirModalCriar() {
 }
 
 function abrirModalEditar(grupo) {
+  carregarLideres();
   modalTitulo.textContent = "Editar grupo";
   salvarBtn.textContent = "Atualizar";
 
