@@ -157,7 +157,6 @@ document.getElementById('confirmarExcluir').addEventListener('click', async func
   }
 });
 
-
 const modalGrupo = document.getElementById("modalGrupo");
 const modalTitulo = document.getElementById("modalGrupoLabel");
 const salvarBtn = document.getElementById('btnSalvarGrupo');

@@ -14,6 +14,7 @@ collapse.addEventListener('hidden.bs.collapse', () => {
     icone.classList.add('bi-caret-down-fill');
 });
 
-async function carregarAtividades() {
-    
-}
+window.addEventListener('DOMContentLoaded', () => {
+    const containerVazio = document.getElementById('lista-vazio');
+    const containerGrupos = document.getElementById('lista-grupos');
+})
