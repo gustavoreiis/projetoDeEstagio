@@ -24,5 +24,17 @@ public class Atividade {
     private Date dataAtividade;
 
     @Column(name = "grupo_pessoas")
-    private String grupoDePessoas;
+    @Enumerated(EnumType.STRING)
+    private GrupoDePessoas grupoDePessoas;
+
+    public enum GrupoDePessoas {
+        ARTES,
+        COMUNICAO_SOCIAL,
+        INTERCESSAO,
+        MUSICA,
+        PREGACAO,
+        PROMOCAO_HUMANA,
+        SERVO,
+        PARTICIPANTE
+    }
 }
