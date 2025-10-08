@@ -21,32 +21,32 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Pessoa> createPessoa(@RequestBody @Valid Pessoa pessoa) {
+    public ResponseEntity<Pessoa> criarPessoa(@RequestBody @Valid Pessoa pessoa) {
         var novaPessoa = pessoaService.criarPessoa(pessoa);
         return ResponseEntity.created(URI.create(novaPessoa.getId().toString())).body(novaPessoa);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pessoa> getPessoaById(@PathVariable Long id) {
+    public ResponseEntity<Pessoa> buscarPessoaPorId(@PathVariable Long id) {
         return pessoaService.buscarPessoaPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Pessoa> getPessoaByCpf(@PathVariable String cpf) {
+    public ResponseEntity<Pessoa> buscarPessoaPorCpf(@PathVariable String cpf) {
         return pessoaService.buscarPessoaPorCpf(cpf)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Pessoa>> getPessoas() {
+    public ResponseEntity<List<Pessoa>> listarPessoas() {
         return ResponseEntity.ok(pessoaService.buscarPessoas());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePessoaById(@PathVariable Long id, @RequestBody Pessoa pessoa) {
+    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long id, @RequestBody Pessoa pessoa) {
         Pessoa atualizada = pessoaService.atualizarPessoa(id, pessoa);
         if (atualizada != null) {
             return ResponseEntity.noContent().build();
@@ -56,7 +56,7 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePessoaById(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarPessoa(@PathVariable Long id) {
         pessoaService.excluirPessoa(id);
         return ResponseEntity.noContent().build();
     }

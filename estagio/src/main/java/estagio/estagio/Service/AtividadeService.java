@@ -25,6 +25,7 @@ public class AtividadeService {
         novaAtividade.setDescricao(atividadeDto.getDescricao());
         novaAtividade.setDataAtividade(atividadeDto.getDataAtividade());
         novaAtividade.setGrupoDePessoas(atividadeDto.getGrupoDePessoas());
+        novaAtividade.setStatusAtividade(Atividade.StatusAtividade.ATIVO);
 
         return atividadeRepository.save(novaAtividade);
     }

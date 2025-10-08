@@ -23,7 +23,7 @@ public class EncontroController {
     }
 
     @PostMapping
-    public ResponseEntity<Encontro> createEncontro(
+    public ResponseEntity<Encontro> criarEncontro(
             @RequestParam("titulo") String titulo,
             @RequestParam("dataHoraInicio") LocalDateTime dataHoraInicio,
             @RequestParam("dataHoraFim") LocalDateTime dataHoraFim,
@@ -36,19 +36,19 @@ public class EncontroController {
     }
 
     @GetMapping("/{idEncontro}")
-    public ResponseEntity<Encontro> getEncontroById(@PathVariable Long idEncontro) {
+    public ResponseEntity<Encontro> buscarEncontroPorId(@PathVariable Long idEncontro) {
         var encontro = encontroService.buscarEncontroPorId(idEncontro);
         return encontro.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Encontro>> getEncontros() {
+    public ResponseEntity<List<Encontro>> listarEncontros() {
         var encontros = encontroService.buscarEncontros();
         return ResponseEntity.ok(encontros);
     }
 
     @PutMapping("/{idEncontro}")
-    public ResponseEntity<?> updateEncontroById(
+    public ResponseEntity<?> atualizarEncontro(
             @PathVariable Long idEncontro,
             @RequestParam String titulo,
             @RequestParam String descricao,
@@ -70,7 +70,7 @@ public class EncontroController {
     }
 
     @DeleteMapping("/{idEncontro}")
-    public ResponseEntity<Void> deleteEncontroById(@PathVariable Long idEncontro) {
+    public ResponseEntity<Void> deletarEncontro(@PathVariable Long idEncontro) {
         encontroService.deletarEncontro(idEncontro);
         return ResponseEntity.noContent().build();
     }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,15 +22,24 @@ public class Atividade {
     private String descricao;
 
     @Column(name = "data_atividade")
-    private Date dataAtividade;
+    private LocalDate dataAtividade;
 
     @Column(name = "grupo_pessoas")
     @Enumerated(EnumType.STRING)
     private GrupoDePessoas grupoDePessoas;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private StatusAtividade statusAtividade;
+
+    public enum StatusAtividade {
+        CONCLUIDO,
+        ATIVO
+    }
+
     public enum GrupoDePessoas {
         ARTES,
-        COMUNICAO_SOCIAL,
+        COMUNICACAO_SOCIAL,
         INTERCESSAO,
         MUSICA,
         PREGACAO,

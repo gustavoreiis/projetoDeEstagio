@@ -1,7 +1,39 @@
-async function abrirModalCriar () {
+async function abrirModalCriar() {
     const modalCriar = new bootstrap.Modal(document.getElementById('modalCriarAtividade'));
     modalCriar.show();
 }
+
+document.getElementById('formCadastroAtividade').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const descricao = document.getElementById('descricao').value;
+    const dataAtividade = document.getElementById('data').value;
+    const grupoDePessoas = document.getElementById('grupo').value;
+
+    const atividade = {
+        descricao,
+        dataAtividade,
+        grupoDePessoas
+    };
+
+    try {
+        const response = fetch('http://localhost:8081/atividades', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(atividade)
+        })
+
+        if (response.ok) {
+            const modalCriar = document.getElementById('modalCriarAtividade');
+            const modalInstance = bootstrap.Modal.getInstance(modalCriar);
+            modalInstance.hide();
+            buscarAtividades();
+        }
+    } catch (error) {
+        console.error(error);
+    }
+})
 
 const collapse = document.getElementById('pesquisaCollapse');
 const icone = document.getElementById('iconeCollapse');
@@ -16,7 +48,7 @@ collapse.addEventListener('hidden.bs.collapse', () => {
 
 async function buscarAtividades() {
     try {
-        const response = await fetch("http://localhost:8080/atividades");
+        const response = await fetch("http://localhost:8081/atividades");
         atividades = await response.json();
         exibirAtividades(atividades);
     } catch (error) {
@@ -26,6 +58,7 @@ async function buscarAtividades() {
 }
 
 function exibirAtividades(lista) {
+    console.log("Lista: " + lista);
     const containerVazio = document.getElementById('lista-vazio');
     const containerAtividades = document.getElementById('lista-atividades');
 
@@ -50,16 +83,16 @@ function exibirAtividades(lista) {
             </div>
           </div>
           <div class="card-body">
-            <p class="card-text"><strong>Data: </strong> ${atividade.data}</p>
-            <p class="card-text"><strong>Grupo: </strong>${atividade.grupo}</p>
-            <p class="card-text"><strong>Status: </strong>${atividade.status}</p>
+            <p class="card-text"><strong>Data: </strong> ${atividade.dataAtividade}</p>
+            <p class="card-text"><strong>Grupo: </strong>${atividade.grupoDePessoas}</p>
+            <p class="card-text"><strong>Status: </strong>${atividade.statusAtividade}</p>
           </div>
           <div class="card-footer text-center d-flex justify-content-around">
             <a class="btn vermelho vermelho-hover text-white btn-sm border" onclick="">Registrar Presenças</a>
           </div>
         </div>
       `;
-      containerAtividades.appendChild(card);
+        containerAtividades.appendChild(card);
     });
 }
 
