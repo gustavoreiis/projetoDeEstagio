@@ -85,14 +85,14 @@
                             <label for="grupo" class="form-label">Grupo</label>
                             <select class="form-select" id="grupo" required>
                                 <option value="" disabled selected>Selecione um grupo</option>
-                                <option value="PARTICIPANTE">Participantes</option>
-                                <option value="SERVO">Servos</option>
-                                <option value="ARTES">Artes</option>
-                                <option value="COMUNICACAO_SOCIAL">Comunicação Social</option>
-                                <option value="INTERCESSAO">Intercessão</option>
-                                <option value="MUSICA">Música</option>
-                                <option value="PREGACAO">Pregação</option>
-                                <option value="PROMOCAO_HUMANA">Promoção Humana</option>
+                                <option value="Participantes">Participantes</option>
+                                <option value="Servos">Servos</option>
+                                <option value="Artes">Artes</option>
+                                <option value="Comunicação Social">Comunicação Social</option>
+                                <option value="Intercessão">Intercessão</option>
+                                <option value="Música">Música</option>
+                                <option value="Pregação">Pregação</option>
+                                <option value="Promoção Humana">Promoção Humana</option>
                             </select>
                         </div>
                     </div>
@@ -124,36 +124,42 @@
 
             <div class="collapse mt-3" id="pesquisaCollapse">
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="dataInicio" class="form-label">Data Início</label>
                         <input type="date" class="form-control" id="dataInicio">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="dataFim" class="form-label">Data Fim</label>
                         <input type="date" class="form-control" id="dataFim">
                     </div>
                     <div class="col-md-3">
                         <label for="grupoFiltro" class="form-label">Grupo</label>
                         <select class="form-select" id="grupoFiltro" required>
-                            <option value="" disabled selected>Selecione um grupo</option>
-                            <option value="participantes">Participantes</option>
-                            <option value="servos">Servos</option>
-                            <option value="artes">Artes</option>
-                            <option value="comunicacao">Comunicação Social</option>
-                            <option value="intercessao">Intercessão</option>
-                            <option value="musica">Música</option>
-                            <option value="pregacao">Pregação</option>
-                            <option value="promocaoHumana">Promoção Humana</option>
+                            <option value="" selected>Todos</option>
+                            <option value="Participantes">Participantes</option>
+                            <option value="Servos">Servos</option>
+                            <option value="Artes">Artes</option>
+                            <option value="Comunicação Social">Comunicação Social</option>
+                            <option value="Intercessão">Intercessão</option>
+                            <option value="Música">Música</option>
+                            <option value="Pregação">Pregação</option>
+                            <option value="Promoção Humana">Promoção Humana</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <label class="form-label d-block">Status</label>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="statusAtivo" value="ativo">
+                            <input class="form-check-input" type="radio" name="status" id="statusTodos" value=""
+                                checked>
+                            <label class="form-check-label" for="statusTodos">Todos</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusAtivo" value="ATIVO">
                             <label class="form-check-label" for="statusAtivo">Ativo</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="statusConcluido" value="concluido">
+                            <input class="form-check-input" type="radio" name="status" id="statusConcluido"
+                                value="CONCLUIDO">
                             <label class="form-check-label" for="statusConcluido">Concluído</label>
                         </div>
                     </div>

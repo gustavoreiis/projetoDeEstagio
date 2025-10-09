@@ -16,7 +16,7 @@ document.getElementById('formCadastroAtividade').addEventListener('submit', asyn
     };
 
     try {
-        const response = fetch('http://localhost:8081/atividades', {
+        const response = await fetch('http://localhost:8080/atividades', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -26,9 +26,10 @@ document.getElementById('formCadastroAtividade').addEventListener('submit', asyn
 
         if (response.ok) {
             const modalCriar = document.getElementById('modalCriarAtividade');
-            const modalInstance = bootstrap.Modal.getInstance(modalCriar);
+            const modalInstance = bootstrap.Modal.getInstance(modalCriar) || new bootstrap.Modal(modalCriar);
             modalInstance.hide();
-            buscarAtividades();
+            await buscarAtividades();
+            event.target.removeEventListener;
         }
     } catch (error) {
         console.error(error);
@@ -48,7 +49,7 @@ collapse.addEventListener('hidden.bs.collapse', () => {
 
 async function buscarAtividades() {
     try {
-        const response = await fetch("http://localhost:8081/atividades");
+        const response = await fetch("http://localhost:8080/atividades");
         atividades = await response.json();
         exibirAtividades(atividades);
     } catch (error) {
@@ -58,7 +59,6 @@ async function buscarAtividades() {
 }
 
 function exibirAtividades(lista) {
-    console.log("Lista: " + lista);
     const containerVazio = document.getElementById('lista-vazio');
     const containerAtividades = document.getElementById('lista-atividades');
 
@@ -68,10 +68,14 @@ function exibirAtividades(lista) {
         containerVazio.classList.remove("d-none");
         return;
     }
+    containerVazio.classList.add('d-none');
 
     lista.forEach(atividade => {
         const card = document.createElement('div');
         card.classList.add("col-md-4");
+
+        const corStatus = atividade.statusAtividade === "ATIVO" ? "bg-success" : "bg-secondary";
+        const textoStatus = atividade.statusAtividade === "ATIVO" ? "Ativo" : "Concluído";
 
         card.innerHTML = `
         <div class="card h-100">
@@ -85,7 +89,7 @@ function exibirAtividades(lista) {
           <div class="card-body">
             <p class="card-text"><strong>Data: </strong> ${atividade.dataAtividade}</p>
             <p class="card-text"><strong>Grupo: </strong>${atividade.grupoDePessoas}</p>
-            <p class="card-text"><strong>Status: </strong>${atividade.statusAtividade}</p>
+            <p class="card-text"><strong>Status: </strong><span class="badge ${corStatus} text-white">${textoStatus}</span></p>
           </div>
           <div class="card-footer text-center d-flex justify-content-around">
             <a class="btn vermelho vermelho-hover text-white btn-sm border" onclick="">Registrar Presenças</a>
@@ -97,7 +101,7 @@ function exibirAtividades(lista) {
 }
 
 function aplicarFiltros() {
-    const texto = document.getElementById('pesquisarInput').ariaValueMax.toLowerCase();
+    const texto = document.getElementById('pesquisarInput').value.toLowerCase();
     const dataInicio = document.getElementById('dataInicio').value;
     const dataFim = document.getElementById('dataFim').value;
     const grupo = document.getElementById('grupoFiltro').value;
@@ -107,10 +111,10 @@ function aplicarFiltros() {
         let match = true;
 
         if (texto && !atividade.descricao.toLowerCase().includes(texto)) match = false;
-        if (grupo && atividade.grupo !== grupo) match = false;
-        if (status && atividade.status !== status) match = false;
-        if (dataInicio && new Date(atividade.data) < new Date(dataInicio)) match = false;
-        if (dataFim && new Date(atividade.data) > new Date(dataFim)) match = false;
+        if (grupo && atividade.grupoDePessoas !== grupo) match = false;
+        if (status && atividade.statusAtividade !== status) match = false;
+        if (dataInicio && new Date(atividade.dataAtividade) < new Date(dataInicio)) match = false;
+        if (dataFim && new Date(atividade.dataAtividade) > new Date(dataFim)) match = false;
 
         return match;
     });

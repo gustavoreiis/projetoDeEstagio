@@ -1,12 +1,13 @@
 package estagio.estagio.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import estagio.estagio.dto.AtividadeDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "atividades")
@@ -32,19 +33,37 @@ public class Atividade {
     @Enumerated(EnumType.STRING)
     private StatusAtividade statusAtividade;
 
+    public Atividade(AtividadeDto atividadeDto) {
+        this.descricao = atividadeDto.getDescricao();
+        this.dataAtividade = atividadeDto.getDataAtividade();
+        this.grupoDePessoas = atividadeDto.getGrupoDePessoas();
+        this.statusAtividade = StatusAtividade.ATIVO;
+    }
+
     public enum StatusAtividade {
         CONCLUIDO,
         ATIVO
     }
 
     public enum GrupoDePessoas {
-        ARTES,
-        COMUNICACAO_SOCIAL,
-        INTERCESSAO,
-        MUSICA,
-        PREGACAO,
-        PROMOCAO_HUMANA,
-        SERVO,
-        PARTICIPANTE
+        ARTES("Artes"),
+        COMUNICACAO_SOCIAL("Comunicação Social"),
+        INTERCESSAO("Intercessão"),
+        MUSICA("Música"),
+        PREGACAO("Pregação"),
+        PROMOCAO_HUMANA("Promoção Humana"),
+        SERVO("Servos"),
+        PARTICIPANTE("Participantes");
+
+        private final String nomeFormatado;
+
+        GrupoDePessoas(String nomeFormatado) {
+            this.nomeFormatado = nomeFormatado;
+        }
+
+        @JsonValue
+        public String getNomeFormatado() {
+            return nomeFormatado;
+        }
     }
 }
