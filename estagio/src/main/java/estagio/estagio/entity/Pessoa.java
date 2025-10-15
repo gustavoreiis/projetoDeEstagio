@@ -64,7 +64,7 @@ public class Pessoa {
 
     public enum Ministerio {
         ARTES,
-        COMUNICAO_SOCIAL,
+        COMUNICACAO_SOCIAL,
         INTERCESSAO,
         MUSICA,
         PREGACAO,

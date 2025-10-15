@@ -90,7 +90,7 @@ public class GrupoService {
     }
 
     @Transactional
-    public void deletarGrupo(Long idGrupo) {
+    public void excluirGrupo(Long idGrupo) {
         pessoaGrupoRepository.deleteByGrupoId(idGrupo);
         grupoRepository.deleteById(idGrupo);
     }

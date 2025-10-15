@@ -31,8 +31,8 @@ public class GrupoController {
     }
 
     @DeleteMapping("/{idGrupo}")
-    public ResponseEntity<Void> deletarGrupo(@PathVariable Long idGrupo) {
-        grupoService.deletarGrupo(idGrupo);
+    public ResponseEntity<Void> excluirGrupo(@PathVariable Long idGrupo) {
+        grupoService.excluirGrupo(idGrupo);
         return ResponseEntity.noContent().build();
     }
 

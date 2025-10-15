@@ -2,7 +2,9 @@ package estagio.estagio.controller;
 
 import estagio.estagio.Service.AtividadeService;
 import estagio.estagio.dto.AtividadeDto;
+import estagio.estagio.dto.PessoaResumoDto;
 import estagio.estagio.entity.Atividade;
+import estagio.estagio.entity.Pessoa;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +29,23 @@ public class AtividadeController {
     public ResponseEntity<Atividade> criarAtividade(@RequestBody AtividadeDto atividadeDto) {
         Atividade novaAtividade = atividadeService.criarAtividade(atividadeDto);
         return ResponseEntity.ok(novaAtividade);
+    }
+
+    @PutMapping("/{idAtividade}")
+    public ResponseEntity<Atividade> atualizarAtividade(@PathVariable Long idAtividade, @RequestBody AtividadeDto atividadeDto) {
+        Atividade atividadeAtualizada = atividadeService.atualizarAtividade(idAtividade, atividadeDto);
+        return ResponseEntity.ok(atividadeAtualizada);
+    }
+
+    @DeleteMapping("/{idAtividade}")
+    public ResponseEntity<Void> deletarAtividade(@PathVariable Long idAtividade) {
+        atividadeService.excluirAtividade(idAtividade);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{idAtividade}")
+    public ResponseEntity<List<PessoaResumoDto>> buscarPessoas(@PathVariable Long idAtividade) {
+        List<PessoaResumoDto> pessoas = atividadeService.buscarPessoas(idAtividade);
+        return ResponseEntity.ok(pessoas);
     }
 }

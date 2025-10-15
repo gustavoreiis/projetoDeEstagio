@@ -22,4 +22,10 @@ public class Presenca {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_atividade")
     private Atividade atividade;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pessoa")
+    private Pessoa pessoa;
+
+    private String observacao;
 }

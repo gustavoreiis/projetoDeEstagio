@@ -90,7 +90,7 @@ public class EncontroService {
 
         deletarArquivo(encontro.getCapa());
         for (Grupo grupo : grupos) {
-            grupoService.deletarGrupo(grupo.getId());
+            grupoService.excluirGrupo(grupo.getId());
         }
         encontroRepository.delete(encontro);
     }
