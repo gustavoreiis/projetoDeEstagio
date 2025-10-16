@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PessoaResumoDto {
-    private Long id;
+public class PessoaPresencaDto {
+    private Long idPessoa;
     private String nome;
+    private boolean presente;
+    private String observacao;
 }

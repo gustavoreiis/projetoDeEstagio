@@ -185,27 +185,28 @@ async function abrirModalPresenca(idAtividade) {
     const pessoas = await response.json();
     
     pessoas.forEach(pessoa => {
+        console.log(pessoa);
         const item = document.createElement('div');
         item.classList.add('border', 'rounded', 'py-2', 'px-4',  'row', 'align-items-center', 'mb-2');
 
         item.innerHTML = `
             <div class="form-check col-md-11">
-                <input class="form-check-input" type="checkbox" value="${pessoa.id}" id="pessoa${pessoa.id}" >
-                <label class="form-check-label mx-3" for="pessoa${pessoa.id}">
+                <input class="form-check-input" type="checkbox" value="${pessoa.idPessoa}" id="pessoa${pessoa.idPessoa}" ${pessoa.presente ? 'checked' : ''}>
+                <label class="form-check-label mx-3" for="pessoa${pessoa.idPessoa}">
                     ${pessoa.nome}
                 </label>
             </div>
-            <button type="button" class="btn col-md-1" id="btnObs${pessoa.id}" title="Adicionar observação">
+            <button type="button" class="btn col-md-1" id="btnObs${pessoa.idPessoa}" title="Adicionar observação">
                 <i class="bi bi-chat-left-text"></i>
             </button>
-            <div class="mt-2 col-md-12 d-none" id="obs-container-${pessoa.id}">
-                <input type="text" class="form-control" id="obs${pessoa.id}" placeholder="Observação">
+            <div class="mt-2 col-md-12 ${pessoa.observacao ? '' : 'd-none'}" id="obs-container-${pessoa.idPessoa}">
+                <input type="text" class="form-control" id="obs${pessoa.idPessoa}" placeholder="Observação" value="${pessoa.observacao ?? ''}">
             </div>
         `;
         lista.appendChild(item);
 
-        const btnObs = document.getElementById(`btnObs${pessoa.id}`);
-        const obsContainer = document.getElementById(`obs-container-${pessoa.id}`);
+        const btnObs = document.getElementById(`btnObs${pessoa.idPessoa}`);
+        const obsContainer = document.getElementById(`obs-container-${pessoa.idPessoa}`);
 
         btnObs.addEventListener('click', () => {
             obsContainer.classList.toggle('d-none');

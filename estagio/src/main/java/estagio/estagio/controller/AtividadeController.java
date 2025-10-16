@@ -2,9 +2,8 @@ package estagio.estagio.controller;
 
 import estagio.estagio.Service.AtividadeService;
 import estagio.estagio.dto.AtividadeDto;
-import estagio.estagio.dto.PessoaResumoDto;
+import estagio.estagio.dto.PessoaPresencaDto;
 import estagio.estagio.entity.Atividade;
-import estagio.estagio.entity.Pessoa;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,8 +43,8 @@ public class AtividadeController {
     }
 
     @GetMapping("/{idAtividade}")
-    public ResponseEntity<List<PessoaResumoDto>> buscarPessoas(@PathVariable Long idAtividade) {
-        List<PessoaResumoDto> pessoas = atividadeService.buscarPessoas(idAtividade);
+    public ResponseEntity<List<PessoaPresencaDto>> buscarPessoas(@PathVariable Long idAtividade) {
+        List<PessoaPresencaDto> pessoas = atividadeService.buscarPessoas(idAtividade);
         return ResponseEntity.ok(pessoas);
     }
 }

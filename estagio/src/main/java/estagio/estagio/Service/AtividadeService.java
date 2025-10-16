@@ -1,14 +1,17 @@
 package estagio.estagio.Service;
 
 import estagio.estagio.dto.AtividadeDto;
-import estagio.estagio.dto.PessoaResumoDto;
+import estagio.estagio.dto.PessoaPresencaDto;
 import estagio.estagio.entity.Atividade;
 import estagio.estagio.entity.Pessoa;
+import estagio.estagio.entity.Presenca;
 import estagio.estagio.repository.AtividadeRepository;
 import estagio.estagio.repository.PessoaRepository;
+import estagio.estagio.repository.PresencaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,10 +19,12 @@ public class AtividadeService {
 
     private final AtividadeRepository atividadeRepository;
     private final PessoaRepository pessoaRepository;
+    private final PresencaRepository presencaRepository;
 
-    public AtividadeService(AtividadeRepository atividadeRepository, PessoaRepository pessoaRepository) {
+    public AtividadeService(AtividadeRepository atividadeRepository, PessoaRepository pessoaRepository, PresencaRepository presencaRepository) {
         this.atividadeRepository = atividadeRepository;
         this.pessoaRepository = pessoaRepository;
+        this.presencaRepository = presencaRepository;
     }
 
     public List<Atividade> listarAtividades() {
@@ -49,7 +54,7 @@ public class AtividadeService {
         atividadeRepository.delete(atividade);
     }
 
-    public List<PessoaResumoDto> buscarPessoas(Long idAtividade) {
+    public List<PessoaPresencaDto> buscarPessoas(Long idAtividade) {
         Atividade atividade = atividadeRepository.findById(idAtividade)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada."));
 
@@ -65,9 +70,15 @@ public class AtividadeService {
             );
         }
 
-        return pessoas.stream()
-                .map(pessoa -> new PessoaResumoDto(pessoa.getId(), pessoa.getNome()))
-                .collect(Collectors.toList());
+        return pessoas.stream().map(pessoa -> {
+            Optional<Presenca> pessoaPresenca = presencaRepository.findByPessoaIdAndAtividadeId(pessoa.getId(), atividade.getId());
+            return new PessoaPresencaDto(
+                    pessoa.getId(),
+                    pessoa.getNome(),
+                    pessoaPresenca.map(Presenca::isPresente).orElse(false),
+                    pessoaPresenca.map(Presenca::getObservacao).orElse(null)
+            );
+        }).collect(Collectors.toList());
     }
 
     public void alterarstatusAtividade(Long idAtividade, Atividade.StatusAtividade statusAtividade) {
