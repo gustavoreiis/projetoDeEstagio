@@ -8,6 +8,7 @@ import estagio.estagio.entity.Presenca;
 import estagio.estagio.repository.AtividadeRepository;
 import estagio.estagio.repository.PessoaRepository;
 import estagio.estagio.repository.PresencaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,21 +37,29 @@ public class AtividadeService {
         return atividadeRepository.save(novaAtividade);
     }
 
+    @Transactional
     public Atividade atualizarAtividade(Long id, AtividadeDto atividadeDto) {
         Atividade atividade = atividadeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada."));
 
         atividade.setDescricao(atividadeDto.getDescricao());
         atividade.setDataAtividade(atividadeDto.getDataAtividade());
-        atividade.setGrupoDePessoas(atividadeDto.getGrupoDePessoas());
+        if (atividade.getGrupoDePessoas() != atividadeDto.getGrupoDePessoas()) {
+            presencaRepository.deleteByAtividadeId(id);
+            atividade.setStatusAtividade(Atividade.StatusAtividade.ATIVO);
+            atividade.setGrupoDePessoas(atividadeDto.getGrupoDePessoas());
+        }
+
 
         return atividadeRepository.save(atividade);
     }
 
+    @Transactional
     public void excluirAtividade(Long idAtividade) {
         Atividade atividade = atividadeRepository.findById(idAtividade)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada."));
 
+        presencaRepository.deleteByAtividadeId(idAtividade);
         atividadeRepository.delete(atividade);
     }
 
