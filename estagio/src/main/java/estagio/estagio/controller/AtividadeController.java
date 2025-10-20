@@ -38,7 +38,7 @@ public class AtividadeController {
 
     @DeleteMapping("/{idAtividade}")
     public ResponseEntity<Void> deletarAtividade(@PathVariable Long idAtividade) {
-        atividadeService.excluirAtividade(idAtividade);
+        atividadeService.deletarAtividade(idAtividade);
         return ResponseEntity.noContent().build();
     }
 

@@ -39,7 +39,7 @@ public class EncontroService {
         encontro.setLocal(local);
         encontro.setPreco(preco);
         encontro.setDescricao(descricao);
-        encontro.setStatus(Encontro.StatusEncontro.ABERTO);
+        encontro.setAberto(true);
 
         if (capa != null && !capa.isEmpty()) {
             String caminhoCapa = salvarArquivo(capa);

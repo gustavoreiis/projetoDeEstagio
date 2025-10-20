@@ -62,6 +62,9 @@ public class Pessoa {
     @Enumerated(EnumType.STRING)
     private Ministerio ministerio;
 
+    @Column(nullable = true)
+    private boolean ativo;
+
     public enum Ministerio {
         ARTES,
         COMUNICACAO_SOCIAL,

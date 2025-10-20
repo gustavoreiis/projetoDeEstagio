@@ -46,7 +46,7 @@ public class AtividadeService {
         atividade.setDataAtividade(atividadeDto.getDataAtividade());
         if (atividade.getGrupoDePessoas() != atividadeDto.getGrupoDePessoas()) {
             presencaRepository.deleteByAtividadeId(id);
-            atividade.setStatusAtividade(Atividade.StatusAtividade.ATIVO);
+            atividade.setAtiva(true);
             atividade.setGrupoDePessoas(atividadeDto.getGrupoDePessoas());
         }
 
@@ -55,7 +55,7 @@ public class AtividadeService {
     }
 
     @Transactional
-    public void excluirAtividade(Long idAtividade) {
+    public void deletarAtividade(Long idAtividade) {
         Atividade atividade = atividadeRepository.findById(idAtividade)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada."));
 
@@ -90,11 +90,11 @@ public class AtividadeService {
         }).collect(Collectors.toList());
     }
 
-    public void alterarstatusAtividade(Long idAtividade, Atividade.StatusAtividade statusAtividade) {
+    public void alterarstatusAtividade(Long idAtividade, boolean ativa) {
         Atividade atividade = atividadeRepository.findById(idAtividade)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada"));
 
-        atividade.setStatusAtividade(statusAtividade);
+        atividade.setAtiva(ativa);
         atividadeRepository.save(atividade);
     }
 }

@@ -40,12 +40,5 @@ public class Encontro {
     private String capa;
 
     @Column(nullable = false)
-    private StatusEncontro status;
-
-    public enum StatusEncontro {
-        PROGRAMADO,
-            ABERTO,
-        ENCERRADO,
-        CANCELADO
-    }
+    private boolean aberto;
 }

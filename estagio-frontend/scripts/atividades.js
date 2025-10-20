@@ -122,8 +122,8 @@ function exibirAtividades(lista) {
         const card = document.createElement('div');
         card.classList.add("col-md-4");
 
-        const corStatus = atividade.statusAtividade === "ATIVO" ? "bg-success" : "bg-secondary";
-        const textoStatus = atividade.statusAtividade === "ATIVO" ? "Ativo" : "Concluído";
+        const corStatus = atividade.ativa ? "bg-success" : "bg-secondary";
+        const textoStatus = atividade.ativa ? "Ativo" : "Concluído";
 
         card.innerHTML = `
         <div class="card h-100">
@@ -160,7 +160,10 @@ function aplicarFiltros() {
 
         if (texto && !atividade.descricao.toLowerCase().includes(texto)) match = false;
         if (grupo && atividade.grupoDePessoas !== grupo) match = false;
-        if (status && atividade.statusAtividade !== status) match = false;
+        if (status) {
+            const statusBool = status === "true";
+            if (atividade.ativa !== statusBool) match = false;
+        }
         if (dataInicio && new Date(atividade.dataAtividade) < new Date(dataInicio)) match = false;
         if (dataFim && new Date(atividade.dataAtividade) > new Date(dataFim)) match = false;
 

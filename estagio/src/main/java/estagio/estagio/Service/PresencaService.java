@@ -42,6 +42,6 @@ public class PresencaService {
 
             presencaRepository.save(presenca);
         }
-        atividadeService.alterarstatusAtividade(atividade.getId(), Atividade.StatusAtividade.CONCLUIDO);
+        atividadeService.alterarstatusAtividade(atividade.getId(), false);
     }
 }

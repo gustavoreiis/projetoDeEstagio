@@ -30,19 +30,13 @@ public class Atividade {
     private GrupoDePessoas grupoDePessoas;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private StatusAtividade statusAtividade;
+    private boolean ativa;
 
     public Atividade(AtividadeDto atividadeDto) {
         this.descricao = atividadeDto.getDescricao();
         this.dataAtividade = atividadeDto.getDataAtividade();
         this.grupoDePessoas = atividadeDto.getGrupoDePessoas();
-        this.statusAtividade = StatusAtividade.ATIVO;
-    }
-
-    public enum StatusAtividade {
-        CONCLUIDO,
-        ATIVO
+        this.ativa = true;
     }
 
     public enum GrupoDePessoas {
