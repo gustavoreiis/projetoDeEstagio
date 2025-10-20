@@ -1,384 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gerenciar Presença — Demo</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* limita a altura do modal-body e ativa scroll interno */
-    #modalPresenca .modal-body {
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/inscritos.css">
+    <title>Musa</title>
 </head>
-<body class="bg-light">
 
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">Gerenciar Presença — Atividades</h3>
-    <div>
-      <button class="btn btn-primary me-2" id="btnNovaAtividade">+ Nova Atividade</button>
-      <button class="btn btn-outline-secondary" id="btnExport">Exportar</button>
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Presença</a></li>
+            </ul>
+        </div>
+        <div
+            class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 d-none text-white"></span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none" onclick="sair()">Sair</button>
+            <button class="btn btn-light branco-hover w-75 mx-auto" onclick="logar()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- FILTROS -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <form id="formFiltros" class="row g-2 align-items-end">
-        <div class="col-md-4">
-          <label class="form-label">Pesquisar participante / atividade</label>
-          <input type="search" id="fPesquisa" class="form-control" placeholder="Nome do participante ou título da atividade">
+    <!-- Conteúdo -->
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 id="titulo" class="fs-2 m-0">Inscritos no Encontro</h1>
+            <button class="btn btn-secondary text-white" onclick="window.history.back()">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </button>
         </div>
-
-        <div class="col-auto">
-          <label class="form-label">Data início</label>
-          <input type="date" id="fDataInicio" class="form-control">
-        </div>
-        <div class="col-auto">
-          <label class="form-label">Data fim</label>
-          <input type="date" id="fDataFim" class="form-control">
-        </div>
-
-        <div class="col-md-2">
-          <label class="form-label">Status</label>
-          <select id="fStatus" class="form-select">
-            <option value="">Todas</option>
-            <option value="futura">Futuras</option>
-            <option value="realizada">Realizadas</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <label class="form-label">Tipo</label>
-          <select id="fTipo" class="form-select">
-            <option value="">Todos</option>
-            <option value="formacao">Formação</option>
-            <option value="encontro_semanal">Encontro semanal</option>
-            <option value="retiro">Retiro</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <label class="form-label">Grupo</label>
-          <select id="fGrupo" class="form-select">
-            <option value="">Todos</option>
-            <option value="servos">Servos</option>
-            <option value="participantes">Participantes</option>
-            <option value="coordenadores">Coordenadores</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <label class="form-label">Ministério</label>
-          <select id="fMinisterio" class="form-select">
-            <option value="">Todos</option>
-            <option value="musica">Música</option>
-            <option value="pregacao">Pregação</option>
-            <option value="intercessao">Intercessão</option>
-          </select>
-        </div>
-
-        <div class="col-12 d-flex gap-2 mt-2">
-          <button type="button" id="btnAplicar" class="btn btn-primary">Aplicar filtros</button>
-          <button type="button" id="btnLimpar" class="btn btn-outline-secondary">Limpar filtros</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- LISTA DE ATIVIDADES -->
-  <div class="card">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0" id="tblAtividades">
-          <thead class="table-light">
-            <tr>
-              <th>Título</th>
-              <th>Data / Hora</th>
-              <th>Local</th>
-              <th>Tipo</th>
-              <th>Grupo</th>
-              <th>Ministério</th>
-              <th>Status</th>
-              <th class="text-end">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyAtividades">
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL PRESENÇA -->
-<div class="modal fade" id="modalPresenca" tabindex="-1" aria-labelledby="modalPresencaLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalPresencaLabel">Registrar presença — <span id="presencaTitulo"></span></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <small id="presencaInfo" class="text-muted"></small>
-          <div class="d-flex gap-2">
-            <button id="marcarTodos" class="btn btn-sm btn-outline-success">Marcar todos</button>
-            <button id="limparTodos" class="btn btn-sm btn-outline-secondary">Limpar todos</button>
-          </div>
+    <!-- Resumo Estatístico -->
+    <div class="container mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted">Total de Inscritos</h6>
+                        <h3 id="totalInscritos">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted">Pagamentos Concluídos</h6>
+                        <h3 id="pagamentosConcluidos">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted">Pendentes</h6>
+                        <h3 id="pagamentosPendentes">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted">Servos / Participantes</h6>
+                        <h3 id="tipoDistribuicao">0 / 0</h3>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <ul class="list-group" id="listaPresenca">
-          <!-- items via JS -->
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        <button type="button" id="btnSalvarPresenca" class="btn btn-primary">Salvar presença</button>
-      </div>
     </div>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // --- Dados mock (substitua com fetch para seu backend) ---
-  const activities = [
-    { id: 1, title: 'Formação Bíblica', date: '2025-09-20', time: '19:30', local: 'Sala A', tipo: 'formacao', grupo: 'servos', ministerio: 'pregacao', status: 'futura' },
-    { id: 2, title: 'Encontro Semanal', date: '2025-09-13', time: '20:00', local: 'Igreja', tipo: 'encontro_semanal', grupo: 'participantes', ministerio: 'musica', status: 'realizada' },
-    { id: 3, title: 'Retiro de Fim de Semana', date: '2025-10-10', time: '08:00', local: 'Sede', tipo: 'retiro', grupo: 'servos', ministerio: 'intercessao', status: 'futura' },
-  ];
+    <!-- Lista de Inscritos -->
+    <div class="container mt-4 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header vermelho text-white">
+                <h5 class="m-0">Lista de Inscritos</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Tipo</th>
+                            <th>Pagamento</th>
+                            <th>Data de Inscrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaInscritos">
+                        <!-- Exemplo de linha -->
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>123.456.789-00</td>
+                            <td>(11) 99999-9999</td>
+                            <td>Participante</td>
+                            <td><span class="badge bg-success">Concluído</span></td>
+                            <td>12/10/2025</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalhes">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" title="Reenviar e-mail de pagamento">
+                                    <i class="bi bi-envelope-arrow-up"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="lista-vazio" class="text-center py-5 d-none">
+                    <i class="bi bi-person-lines-fill fs-3"></i>
+                    <p class="text-secondary m-0">Nenhum inscrito encontrado</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  // mock: participantes por atividade
-  const participantsByActivity = {
-    1: [
-      { id: 87, nome: 'Ana Silva', grupo: 'servos' },
-      { id: 88, nome: 'Carlos Souza', grupo: 'servos' },
-      { id: 89, nome: 'Mariana Rocha', grupo: 'participantes' }
-    ],
-    2: [
-      { id: 90, nome: 'Pedro Lima', grupo: 'participantes' },
-      { id: 91, nome: 'João Alves', grupo: 'participantes' }
-    ],
-    3: [
-      { id: 92, nome: 'Luciana Costa', grupo: 'musica' },
-      { id: 93, nome: 'Rafael Gomes', grupo: 'intercessao' }
-    ]
-  };
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header vermelho text-white">
+                    <h5 class="modal-title" id="modalDetalhesLabel">Detalhes do Inscrito</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><strong>Nome:</strong><p id="detalheNome">Maria Silva</p></div>
+                        <div class="col-md-6"><strong>CPF:</strong><p id="detalheCpf">123.456.789-00</p></div>
+                        <div class="col-md-6"><strong>Telefone:</strong><p id="detalheTelefone">(11) 99999-9999</p></div>
+                        <div class="col-md-6"><strong>E-mail:</strong><p id="detalheEmail">maria@gmail.com</p></div>
+                        <div class="col-md-6"><strong>Data de Nascimento:</strong><p id="detalheNascimento">20/05/1995</p></div>
+                        <div class="col-md-6"><strong>Sexo:</strong><p id="detalheSexo">Feminino</p></div>
+                        <div class="col-md-12"><strong>Endereço:</strong><p id="detalheEndereco">Rua das Flores, 123</p></div>
+                        <div class="col-md-6"><strong>Responsável:</strong><p id="detalheResponsavel">João Pereira</p></div>
+                        <div class="col-md-6"><strong>Coordenador:</strong><p id="detalheCoordenador">Sim</p></div>
+                        <div class="col-md-6"><strong>Ministério:</strong><p id="detalheMinisterio">Música</p></div>
+                        <div class="col-md-6"><strong>Autorização:</strong><p id="detalheAutorizacao">Sim</p></div>
+                        <div class="col-md-12"><strong>Observações:</strong><p id="detalheObservacao">Nenhuma observação adicional.</p></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  // --- Helpers DOM ---
-  const tbodyAtividades = document.getElementById('tbodyAtividades');
-  const fPesquisa = document.getElementById('fPesquisa');
-  const fDataInicio = document.getElementById('fDataInicio');
-  const fDataFim = document.getElementById('fDataFim');
-  const fStatus = document.getElementById('fStatus');
-  const fTipo = document.getElementById('fTipo');
-  const fGrupo = document.getElementById('fGrupo');
-  const fMinisterio = document.getElementById('fMinisterio');
-  const btnAplicar = document.getElementById('btnAplicar');
-  const btnLimpar = document.getElementById('btnLimpar');
-
-  // modal elements
-  const modalPresencaEl = document.getElementById('modalPresenca');
-  const modalPresenca = bootstrap.Modal.getOrCreateInstance(modalPresencaEl);
-  const presencaTitulo = document.getElementById('presencaTitulo');
-  const presencaInfo = document.getElementById('presencaInfo');
-  const listaPresenca = document.getElementById('listaPresenca');
-  const marcarTodosBtn = document.getElementById('marcarTodos');
-  const limparTodosBtn = document.getElementById('limparTodos');
-  const btnSalvarPresenca = document.getElementById('btnSalvarPresenca');
-
-  let atividadeAtual = null;
-  let estadoPresenca = {}; // { participantId: true/false }
-
-  // render table
-  function renderActivities(list) {
-    tbodyAtividades.innerHTML = '';
-    if (list.length === 0) {
-      tbodyAtividades.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">Nenhuma atividade encontrada.</td></tr>`;
-      return;
-    }
-
-    list.forEach(a => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${a.title}</td>
-        <td>${a.date} ${a.time}</td>
-        <td>${a.local}</td>
-        <td>${formatTipo(a.tipo)}</td>
-        <td>${formatGrupo(a.grupo)}</td>
-        <td>${formatMinisterio(a.ministerio)}</td>
-        <td>${formatStatus(a.status)}</td>
-        <td class="text-end">
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="abrirPresenca(${a.id})">Registrar presença</button>
-          <button class="btn btn-sm btn-outline-secondary me-1" onclick="editarAtividade(${a.id})">Editar</button>
-          <button class="btn btn-sm btn-outline-danger" onclick="excluirAtividade(${a.id})">Excluir</button>
-        </td>
-      `;
-      tbodyAtividades.appendChild(tr);
-    });
-  }
-
-  function formatTipo(t) {
-    const map = { formacao: 'Formação', encontro_semanal: 'Encontro semanal', retiro: 'Retiro' };
-    return map[t] || t;
-  }
-  function formatGrupo(g) {
-    const map = { servos: 'Servos', participantes: 'Participantes', coordenadores: 'Coordenadores' };
-    return map[g] || g;
-  }
-  function formatMinisterio(m) {
-    const map = { musica: 'Música', pregacao: 'Pregação', intercessao: 'Intercessão' };
-    return map[m] || m;
-  }
-  function formatStatus(s) {
-    return s === 'realizada' ? '<span class="badge bg-success">Realizada</span>' : '<span class="badge bg-info">Futura</span>';
-  }
-
-  // filter logic
-  function aplicarFiltros() {
-    const pesquisa = fPesquisa.value.trim().toLowerCase();
-    const inicio = fDataInicio.value;
-    const fim = fDataFim.value;
-    const status = fStatus.value;
-    const tipo = fTipo.value;
-    const grupo = fGrupo.value;
-    const ministerio = fMinisterio.value;
-
-    const filtered = activities.filter(a => {
-      if (status && a.status !== status) return false;
-      if (tipo && a.tipo !== tipo) return false;
-      if (grupo && a.grupo !== grupo) return false;
-      if (ministerio && a.ministerio !== ministerio) return false;
-
-      if (inicio && a.date < inicio) return false;
-      if (fim && a.date > fim) return false;
-
-      if (pesquisa) {
-        const inTitle = a.title.toLowerCase().includes(pesquisa);
-        // também pode pesquisar por participantes: se algum participante tiver o nome buscamos
-        const participants = participantsByActivity[a.id] || [];
-        const inParticipants = participants.some(p => p.nome.toLowerCase().includes(pesquisa));
-        if (!inTitle && !inParticipants) return false;
-      }
-
-      return true;
-    });
-
-    renderActivities(filtered);
-  }
-
-  function limparFiltros() {
-    fPesquisa.value = '';
-    fDataInicio.value = '';
-    fDataFim.value = '';
-    fStatus.value = '';
-    fTipo.value = '';
-    fGrupo.value = '';
-    fMinisterio.value = '';
-    aplicarFiltros();
-  }
-
-  // abrir modal presença
-  window.abrirPresenca = function (idAtividade) {
-    atividadeAtual = activities.find(a => a.id === idAtividade);
-    if (!atividadeAtual) return;
-
-    presencaTitulo.textContent = atividadeAtual.title;
-    presencaInfo.textContent = `${atividadeAtual.date} ${atividadeAtual.time} • ${atividadeAtual.local}`;
-
-    // carregar participantes (substituir por fetch no backend)
-    const participants = participantsByActivity[idAtividade] || [];
-
-    // inicializa estadoPresenca com false
-    estadoPresenca = {};
-    participants.forEach(p => estadoPresenca[p.id] = false);
-
-    // render lista
-    listaPresenca.innerHTML = '';
-    if (participants.length === 0) {
-      listaPresenca.innerHTML = `<li class="list-group-item text-muted">Nenhum participante disponível para esta atividade.</li>`;
-    } else {
-      participants.forEach(p => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item d-flex justify-content-between align-items-center';
-
-        const left = document.createElement('div');
-        left.innerHTML = `<strong>${p.nome}</strong><br><small class="text-muted">${formatGrupo(p.grupo)}</small>`;
-
-        const right = document.createElement('div');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'form-check-input';
-        checkbox.id = `p-${p.id}`;
-        checkbox.onclick = () => estadoPresenca[p.id] = checkbox.checked;
-
-        right.appendChild(checkbox);
-        li.appendChild(left);
-        li.appendChild(right);
-        listaPresenca.appendChild(li);
-      });
-    }
-
-    modalPresenca.show();
-  };
-
-  // marcar todos / limpar todos
-  marcarTodosBtn.addEventListener('click', () => {
-    document.querySelectorAll('#listaPresenca input[type="checkbox"]').forEach(cb => {
-      cb.checked = true;
-      const id = parseInt(cb.id.replace('p-', ''));
-      estadoPresenca[id] = true;
-    });
-  });
-
-  limparTodosBtn.addEventListener('click', () => {
-    document.querySelectorAll('#listaPresenca input[type="checkbox"]').forEach(cb => {
-      cb.checked = false;
-      const id = parseInt(cb.id.replace('p-', ''));
-      estadoPresenca[id] = false;
-    });
-  });
-
-  // salvar presença (substituir por POST/PUT no backend)
-  btnSalvarPresenca.addEventListener('click', async () => {
-    // aqui você faria fetch para enviar estadoPresenca para o backend
-    console.log('Salvando presença da atividade', atividadeAtual?.id, estadoPresenca);
-
-    // simula espera e feedback
-    btnSalvarPresenca.disabled = true;
-    btnSalvarPresenca.textContent = 'Salvando...';
-    setTimeout(() => {
-      btnSalvarPresenca.disabled = false;
-      btnSalvarPresenca.textContent = 'Salvar presença';
-      modalPresenca.hide();
-      // após salvar, atualize lista de atividades ou feedback
-      aplicarFiltros();
-    }, 700);
-  });
-
-  // editar e excluir (placeholders)
-  window.editarAtividade = function (id) {
-    alert('Editar atividade ' + id + ' (implemente o formulário de edição / modal).');
-  };
-  window.excluirAtividade = function (id) {
-    if (!confirm('Deseja excluir essa atividade?')) return;
-    // chamar backend para excluir e depois atualizar
-    alert('Atividade ' + id + ' excluída (simulação).');
-  };
-
-  // eventos filtros
-  btnAplicar.addEventListener('click', aplicarFiltros);
-  btnLimpar.addEventListener('click', limparFiltros);
-  fPesquisa.addEventListener('keyup', (e) => { if (e.key === 'Enter') aplicarFiltros(); });
-
-  // render inicial
-  renderActivities(activities);
-</script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/inscritos.js"></script>
 </body>
+
 </html>
