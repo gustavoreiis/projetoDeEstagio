@@ -53,13 +53,18 @@
         </div>
     </div>
 
-    <!-- Conteúdo -->
+    <!-- Cabeçalho -->
     <div class="container my-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1 id="titulo" class="fs-2 m-0">Inscritos no Encontro</h1>
-            <button class="btn btn-secondary text-white" onclick="window.history.back()">
-                <i class="bi bi-arrow-left"></i> Voltar
-            </button>
+        <div class="container-head d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <button onclick="voltarEncontro()" class="btn d-flex align-items-center me-2 p-0 border-0">
+                    <i class="bi bi-arrow-left fs-3"></i>
+                </button>
+                <div>
+                    <h1 id="titulo" class="fs-2 m-0">Prova de Fogo</h1>
+                    <p class="m-0">Gerenciamento de Inscrições</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -67,23 +72,23 @@
     <div class="container mb-4">
         <div class="row g-3">
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card text-center shadow-sm" style="border-top: 7px solid #B53534;">
                     <div class="card-body">
                         <h6 class="text-muted">Total de Inscritos</h6>
-                        <h3 id="totalInscritos">0</h3>
+                        <h3 id="totalInscritos">1</h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card text-center shadow-sm" style="border-top: 7px solid #B53534;">
                     <div class="card-body">
                         <h6 class="text-muted">Pagamentos Concluídos</h6>
-                        <h3 id="pagamentosConcluidos">0</h3>
+                        <h3 id="pagamentosConcluidos">1</h3>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card text-center shadow-sm" style="border-top: 7px solid #B53534;">
                     <div class="card-body">
                         <h6 class="text-muted">Pendentes</h6>
                         <h3 id="pagamentosPendentes">0</h3>
@@ -91,15 +96,65 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card text-center shadow-sm" style="border-top: 7px solid #B53534;">
                     <div class="card-body">
                         <h6 class="text-muted">Servos / Participantes</h6>
-                        <h3 id="tipoDistribuicao">0 / 0</h3>
+                        <h3 id="tipoDistribuicao">0 / 1</h3>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Filtro -->
+    <div class="container my-3">
+        <form id="formFiltros">
+            <div class="row g-2">
+                <div class="col-12 col-md-10">
+                    <input type="text" class="form-control" id="pesquisarNome" placeholder="Pesquisar por nome">
+                </div>
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-light text-dark w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                        <i id="iconeCollapse" class="bi bi-caret-down-fill"></i> Filtros
+                    </button>
+                </div>
+            </div>
+
+            <div class="collapse mt-3" id="filtrosCollapse">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="tipoFiltro" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipoFiltro">
+                            <option value="">Todos</option>
+                            <option value="Participante">Participante</option>
+                            <option value="Servo">Servo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label d-block">Status do Pagamento</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoTodos"
+                                value="" checked>
+                            <label class="form-check-label" for="pagamentoTodos">Todos</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoConcluido"
+                                value="Concluído">
+                            <label class="form-check-label" for="pagamentoConcluido">Concluído</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoPendente"
+                                value="Pendente">
+                            <label class="form-check-label" for="pagamentoPendente">Pendente</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
 
     <!-- Lista de Inscritos -->
     <div class="container mt-4 mb-5">
@@ -121,7 +176,7 @@
                         </tr>
                     </thead>
                     <tbody id="tabelaInscritos">
-                        <!-- Exemplo de linha -->
+                        <!-- Exemplo -->
                         <tr>
                             <td>Maria Silva</td>
                             <td>123.456.789-00</td>
@@ -130,13 +185,9 @@
                             <td><span class="badge bg-success">Concluído</span></td>
                             <td>12/10/2025</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal"
-                                    data-bs-target="#modalDetalhes">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning" title="Reenviar e-mail de pagamento">
-                                    <i class="bi bi-envelope-arrow-up"></i>
-                                </button>
+                                <button class="btn vermelho-border" data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalhes"><i class="bi bi-eye"></i></button>
+                                <button class="btn vermelho-border" title="Reenviar e-mail de pagamento"><i class="bi bi-envelope"></i></button>
                             </td>
                         </tr>
                     </tbody>

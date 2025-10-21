@@ -2,8 +2,10 @@ package estagio.estagio.Service;
 
 import estagio.estagio.entity.Encontro;
 import estagio.estagio.entity.Grupo;
+import estagio.estagio.entity.Inscricao;
 import estagio.estagio.repository.EncontroRepository;
 import estagio.estagio.repository.GrupoRepository;
+import estagio.estagio.repository.InscricaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +26,13 @@ public class EncontroService {
     private final GrupoRepository grupoRepository;
     private final GrupoService grupoService;
     private final String uploadDir = "uploads"; // Pasta de destino
+    private final InscricaoRepository inscricaoRepository;
 
-    public EncontroService(GrupoService grupoService, EncontroRepository encontroRepository, GrupoRepository grupoRepository) {
+    public EncontroService(GrupoService grupoService, EncontroRepository encontroRepository, GrupoRepository grupoRepository, InscricaoRepository inscricaoRepository) {
         this.grupoService = grupoService;
         this.encontroRepository = encontroRepository;
         this.grupoRepository = grupoRepository;
+        this.inscricaoRepository = inscricaoRepository;
     }
 
     public Encontro criarEncontro(String titulo, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String local, float preco, String descricao, MultipartFile capa) {
@@ -87,11 +91,13 @@ public class EncontroService {
         Encontro encontro = encontroRepository.findById(idEncontro)
                 .orElseThrow(() -> new RuntimeException("Encontro não encontrado."));
         List<Grupo> grupos = grupoRepository.findByEncontroId(idEncontro);
+        List<Inscricao> inscricoes = inscricaoRepository.findByEncontroId(idEncontro);
 
         deletarArquivo(encontro.getCapa());
         for (Grupo grupo : grupos) {
             grupoService.excluirGrupo(grupo.getId());
         }
+        inscricaoRepository.deleteAll(inscricoes);
         encontroRepository.delete(encontro);
     }
 
