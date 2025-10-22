@@ -4,6 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-inscricao').href = `inscricao.html?encontro=${id}`;
 })
 
+function abrirInscricoes() {
+  const id = params.get('id');
+  window.location.href = `inscricoes.html?id=${id}`;
+}
+
 function abrirGrupos() {
   const id = params.get('id');
   window.location.href = `grupos.html?id=${id}`;

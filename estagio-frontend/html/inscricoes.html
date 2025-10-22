@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/inscricoes.css">
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html"><img class="rounded-circle" src="../images/logo.jpg"
+                    alt="Logo Musa" height="40"></a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Presença</a></li>
+            </ul>
+        </div>
+        <div
+            class="d-flex flex-column align-items-center justify-content-center position-absolute start-50 translate-middle-x w-100 bottom-0 pb-4 fs-5">
+            <i class="bi bi-person-circle fs-2 mb-2 text-white"></i>
+            <span id="usuarioNome" class="mb-2 d-none text-white"></span>
+            <button id="btn-sair" class="btn branco branco-hover border-0 d-none" onclick="sair()">Sair</button>
+            <button class="btn btn-light branco-hover w-75 mx-auto" onclick="logar()">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="container-head d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <button onclick="voltarEncontro()" class="btn d-flex align-items-center me-2 p-0 border-0">
+                    <i class="bi bi-arrow-left fs-3"></i>
+                </button>
+                <div>
+                    <h1 id="titulo" class="fs-2 m-0"></h1>
+                    <p class="m-0">Gerenciamento de Inscrições</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-4">
+  <div class="row g-3 align-items-stretch">
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm h-100 border-top-vermelho">
+        <div class="card-body">
+          <h6 class="text-muted">Total de Inscritos</h6>
+          <h3 id="totalInscritos">-</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm h-100 border-top-vermelho">
+        <div class="card-body">
+          <h6 class="text-muted">Pagamentos Concluídos</h6>
+          <h3 id="pagamentosConcluidos">-</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm h-100 border-top-vermelho">
+        <div class="card-body">
+          <h6 class="text-muted">Pagamentos Pendentes</h6>
+          <h3 id="pagamentosPendentes">-</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center shadow-sm h-100 border-top-vermelho">
+        <div class="card-body">
+          <h6 class="text-muted">Servos / Participantes</h6>
+          <h3><span id="inscricoesServos">-</span>/<span id="inscricoesParticipantes">-</span></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Filtro -->
+    <div class="container my-3">
+        <form id="formFiltros">
+            <div class="row g-2">
+                <div class="col-12 col-md-10">
+                    <input type="text" class="form-control" id="pesquisarNome" placeholder="Pesquisar por nome">
+                </div>
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-light text-dark w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                        <i id="iconeCollapse" class="bi bi-caret-down-fill"></i> Filtros
+                    </button>
+                </div>
+            </div>
+
+            <div class="collapse mt-3" id="filtrosCollapse">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="tipoFiltro" class="form-label">Tipo</label>
+                        <select class="form-select" id="tipoFiltro">
+                            <option value="">Todos</option>
+                            <option value="Participante">Participante</option>
+                            <option value="Servo">Servo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label d-block">Status do Pagamento</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoTodos"
+                                value="" checked>
+                            <label class="form-check-label" for="pagamentoTodos">Todos</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoConcluido"
+                                value="Concluído">
+                            <label class="form-check-label" for="pagamentoConcluido">Concluído</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pagamentoFiltro" id="pagamentoPendente"
+                                value="Pendente">
+                            <label class="form-check-label" for="pagamentoPendente">Pendente</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
+
+    <!-- Lista de Inscritos -->
+    <div class="container mt-4 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header vermelho text-white">
+                <h5 class="m-0">Lista de Inscritos</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Tipo</th>
+                            <th>Pagamento</th>
+                            <th>Data de Inscrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaInscritos">
+                        <!-- Exemplo -->
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>123.456.789-00</td>
+                            <td>(11) 99999-9999</td>
+                            <td>Participante</td>
+                            <td><span class="badge bg-success">Concluído</span></td>
+                            <td>12/10/2025</td>
+                            <td>
+                                <button class="btn vermelho-border" data-bs-toggle="modal"
+                                    data-bs-target="#modalDetalhes"><i class="bi bi-eye"></i></button>
+                                <button class="btn vermelho-border" title="Reenviar e-mail de pagamento"><i class="bi bi-envelope"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="lista-vazio" class="text-center py-5 d-none">
+                    <i class="bi bi-person-lines-fill fs-3"></i>
+                    <p class="text-secondary m-0">Nenhum inscrito encontrado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header vermelho text-white">
+                    <h5 class="modal-title" id="modalDetalhesLabel">Detalhes do Inscrito</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><strong>Nome:</strong><p id="detalheNome">Maria Silva</p></div>
+                        <div class="col-md-6"><strong>CPF:</strong><p id="detalheCpf">123.456.789-00</p></div>
+                        <div class="col-md-6"><strong>Telefone:</strong><p id="detalheTelefone">(11) 99999-9999</p></div>
+                        <div class="col-md-6"><strong>E-mail:</strong><p id="detalheEmail">maria@gmail.com</p></div>
+                        <div class="col-md-6"><strong>Data de Nascimento:</strong><p id="detalheNascimento">20/05/1995</p></div>
+                        <div class="col-md-6"><strong>Sexo:</strong><p id="detalheSexo">Feminino</p></div>
+                        <div class="col-md-12"><strong>Endereço:</strong><p id="detalheEndereco">Rua das Flores, 123</p></div>
+                        <div class="col-md-6"><strong>Responsável:</strong><p id="detalheResponsavel">João Pereira</p></div>
+                        <div class="col-md-6"><strong>Coordenador:</strong><p id="detalheCoordenador">Sim</p></div>
+                        <div class="col-md-6"><strong>Ministério:</strong><p id="detalheMinisterio">Música</p></div>
+                        <div class="col-md-6"><strong>Autorização:</strong><p id="detalheAutorizacao">Sim</p></div>
+                        <div class="col-md-12"><strong>Observações:</strong><p id="detalheObservacao">Nenhuma observação adicional.</p></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/inscricoes.js"></script>
+</body>
+
+</html>
