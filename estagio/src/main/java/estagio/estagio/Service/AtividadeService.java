@@ -90,7 +90,7 @@ public class AtividadeService {
         }).collect(Collectors.toList());
     }
 
-    public void alterarstatusAtividade(Long idAtividade, boolean ativa) {
+    public void alterarStatusAtividade(Long idAtividade, boolean ativa) {
         Atividade atividade = atividadeRepository.findById(idAtividade)
                 .orElseThrow(() -> new RuntimeException("Atividade não encontrada"));
 
