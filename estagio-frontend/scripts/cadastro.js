@@ -142,3 +142,8 @@ function telefoneValido(telefone) {
   const numeros = telefone.replace(/\D/g, '');
   return numeros.length === 10 || numeros.length === 11;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hoje = new Date().toISOString().split("T")[0];
+  document.getElementById('nascimento').setAttribute('max', hoje);
+})

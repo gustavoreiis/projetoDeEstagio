@@ -29,10 +29,10 @@ public class Inscricao {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Encontro encontro;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean autorizado;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean pago;
 
     @Column(nullable = false)
