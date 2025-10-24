@@ -1,12 +1,12 @@
 const usuario = JSON.parse(localStorage.getItem('usuario'));
 function logar() {
-    const paginaAtual = encodeURIComponent(window.location.href);
-    window.location.href = `/html/login.html?redirect=${paginaAtual}`;
+  const paginaAtual = encodeURIComponent(window.location.href);
+  window.location.href = `/html/login.html?redirect=${paginaAtual}`;
 }
 
 function sair() {
-    localStorage.removeItem('usuario');
-    window.location.reload(); 
+  localStorage.removeItem('usuario');
+  window.location.reload();
 }
 
 if (usuario) {
@@ -46,7 +46,7 @@ async function verificarCpf(cpf, nascimento) {
     }
     document.getElementById('cpf').value = formatarCpf(cpf);
     document.getElementById('nascimento').value = nascimento;
-    document.getElementById('cpf').disabled = true;  
+    document.getElementById('cpf').disabled = true;
 
     if (dados.existe) {
       const resPessoa = await fetch(`http://localhost:8080/pessoas/cpf/${cpf}`);
@@ -114,9 +114,9 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
   e.preventDefault();
 
   if (!telefoneValido(document.getElementById('telefone').value)) {
-        mostrarErroModal("Formato de telefone inválido.");
-        return;
-    }
+    mostrarErroModal("Formato de telefone inválido.");
+    return;
+  }
 
   const pessoa = {
     nome: document.getElementById('nome').value,
@@ -182,6 +182,7 @@ function acionarCamposResponsavel() {
   const dataNascimento = document.getElementById('nascimento').value;
   if (!dataNascimento) {
     document.getElementById('campos-responsavel').classList.add('d-none');
+    document.getElementById('campo-autorizacao').classList.add('d-none');
     return;
   }
 
@@ -189,10 +190,14 @@ function acionarCamposResponsavel() {
 
   if (idade < 18) {
     document.getElementById('campos-responsavel').classList.remove('d-none');
+    document.getElementById('campo-autorizacao').classList.remove('d-none');
+
     document.getElementById('responsavelNome').required = true;
     document.getElementById('responsavelTelefone').required = true;
   } else {
     document.getElementById('campos-responsavel').classList.add('d-none');
+    document.getElementById('campo-autorizacao').classList.add('d-none');
+
     document.getElementById('responsavelNome').required = false;
     document.getElementById('responsavelTelefone').required = false;
   }
@@ -241,6 +246,13 @@ function telefoneValido(telefone) {
   return numeros.length === 10 || numeros.length === 11;
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const hoje = new Date().toISOString().split("T")[0];
+  document.getElementById("nascimento").setAttribute("max", hoje);
+
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+  popoverTriggerList.forEach(pop => new bootstrap.Popover(pop));
+});
 
 
 

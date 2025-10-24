@@ -30,10 +30,10 @@ public class Inscricao {
     private Encontro encontro;
 
     @Column(nullable = false)
-    private boolean autorizacao;
+    private boolean autorizado;
 
     @Column(nullable = false)
-    private boolean pagamento;
+    private boolean pago;
 
     @Column(nullable = false)
     private LocalDateTime dataInscricao;

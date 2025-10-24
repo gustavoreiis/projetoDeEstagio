@@ -15,3 +15,27 @@ if (idEncontro) {
             console.error("Erro ao buscar dados do encontro:", error);
         });
 }
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const response = await fetch(`http://localhost:8080/inscricoes/encontro/${idEncontro}/resumo`);
+    const resumo = await response.json();
+    console.log(resumo);
+    preencherResumo(resumo);
+
+    const inscricoesResponse = await fetch(`http://localhost:8080/inscricoes/encontro/${idEncontro}`);
+    const inscricoes = await inscricoesResponse.json();
+    console.log(inscricoes);
+    preencherListaInscricoes(inscricoes);
+
+});
+
+function preencherResumo(resumo) {
+    document.getElementById("totalInscritos").innerText = resumo.total;
+    document.getElementById("pagos").innerText = resumo.pagos;
+    document.getElementById("naoPagos").innerText = resumo.naoPagos;
+    document.getElementById("inscricoesServos").innerText = resumo.servos;
+    document.getElementById("inscricoesParticipantes").innerText = resumo.participantes;
+}
+
+function preencherListaInscricoes(inscricoes) {
+}

@@ -35,11 +35,13 @@
         </div>
         <div class="offcanvas-body d-flex justify-content-center">
             <ul class="nav flex-column fs-5">
-                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a>
+                </li>
                 <hr class="text-white">
                 <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a>
+                </li>
             </ul>
         </div>
         <div
@@ -158,7 +160,7 @@
                             <h5 class="text-center mb-3 fw-bold">Informações do Servo</h5>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="ministerio" class="form-label" >Ministério</label>
+                                    <label for="ministerio" class="form-label">Ministério</label>
                                     <select name="ministerio" id="ministerio" class="form-select">
                                         <option selected disabled value="">Selecione</option>
                                         <option value="ARTES">Artes</option>
@@ -187,6 +189,34 @@
                                 <div class="col-md-3">
                                     <label for="responsavelTelefone" class="form-label">Telefone do Responsável</label>
                                     <input type="tel" class="form-control" id="responsavelTelefone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-none" id="campo-autorizacao">
+                            <hr>
+                            <h5 class="text-center mb-3 fw-bold">Autorização</h5>
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-6 align-self-end">
+                                    <div class="d-flex">
+                                        <button type="button" class="btn btn-sm vermelho-border branco-hover m-1"
+                                            data-bs-toggle="popover" data-bs-placement="right"
+                                            title="Autorização" data-bs-content="Por ser menor de idade, é necessário apresentar uma autorização assinada pelo responsável. Baixe o modelo abaixo, preencha e assine antes de enviar o arquivo digitalizado ou fotografado.">
+                                            <i class="bi bi-info-circle"></i>
+                                        </button>
+
+                                        <a href="../files/modeloAutorizacao.pdf"
+                                            class="btn vermelho-border branco-hover" download>
+                                            <i class="bi bi-file-earmark-arrow-down"></i>Baixar modelo de autorização
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="autorizacaoArquivo" class="form-label">Enviar autorização
+                                        assinada</label>
+                                    <input type="file" class="form-control" id="autorizacaoArquivo"
+                                        accept=".pdf,.jpg,.jpeg,.png">
                                 </div>
                             </div>
                         </div>

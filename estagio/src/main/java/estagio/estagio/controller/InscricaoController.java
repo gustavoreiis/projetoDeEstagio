@@ -2,6 +2,8 @@ package estagio.estagio.controller;
 
 import estagio.estagio.Service.InscricaoService;
 import estagio.estagio.dto.InscricaoRequest;
+import estagio.estagio.dto.InscricaoResumoDto;
+import estagio.estagio.dto.ResumoInscricoesEncontro;
 import estagio.estagio.entity.Inscricao;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +40,15 @@ public class InscricaoController {
     }
 
     @GetMapping("/encontro/{idEncontro}")
-    public ResponseEntity<List<Inscricao>> listarPorEncontro(@PathVariable Long idEncontro) {
-        List<Inscricao> inscricoes = inscricaoService.buscarInscricoesPorEncontro(idEncontro);
+    public ResponseEntity<List<InscricaoResumoDto>> listarInscricoesEncontro(@PathVariable Long idEncontro) {
+        List<InscricaoResumoDto> inscricoes = inscricaoService.listarInscricoesResumidas(idEncontro);
         return ResponseEntity.ok(inscricoes);
+    }
+
+    @GetMapping("/encontro/{idEncontro}/resumo")
+    public ResponseEntity<ResumoInscricoesEncontro> obterResumoInscricoesEncontro(@PathVariable Long idEncontro) {
+        ResumoInscricoesEncontro resumo = inscricaoService.buscarDadosInscricoesEncontro(idEncontro);
+        return ResponseEntity.ok(resumo);
     }
 
     @GetMapping("/participante/{idPessoa}")

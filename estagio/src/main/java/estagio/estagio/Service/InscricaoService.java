@@ -1,7 +1,10 @@
 package estagio.estagio.Service;
 
 import estagio.estagio.dto.InscricaoRequest;
+import estagio.estagio.dto.InscricaoResumoDto;
+import estagio.estagio.dto.ResumoInscricoesEncontro;
 import estagio.estagio.entity.*;
+import estagio.estagio.repository.EncontroRepository;
 import estagio.estagio.repository.InscricaoRepository;
 import estagio.estagio.repository.PessoaRepository;
 import estagio.estagio.repository.ResponsavelRepository;
@@ -35,6 +38,8 @@ public class InscricaoService {
     private JavaMailSender mailSender;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private EncontroRepository encontroRepository;
 
     public Inscricao inscreverParticipante(InscricaoRequest request) {
 
@@ -130,16 +135,61 @@ public class InscricaoService {
         }
     }
 
-
     public void cancelarInscricao(Long inscricaoId) {
         inscricaoRepository.deleteById(inscricaoId);
     }
 
-    public List<Inscricao> buscarInscricoesPorEncontro(Long encontroId) {
-        return inscricaoRepository.findByEncontroId(encontroId);
+    public List<InscricaoResumoDto> listarInscricoesResumidas(Long encontroId) {
+        List<Inscricao> inscricoes = inscricaoRepository.findByEncontroId(encontroId);
+
+        return inscricoes.stream().map(inscricao -> {
+            var pessoa = inscricao.getPessoa();
+
+            String grupo = pessoa.getTipo() == Pessoa.TipoPessoa.SERVO
+                    ? String.valueOf(pessoa.getMinisterio())
+                    : "Participante";
+
+            return new InscricaoResumoDto(
+                    inscricao.getId(),
+                    pessoa.getNome(),
+                    pessoa.getTelefone(),
+                    grupo,
+                    inscricao.isPago() ? "Concluído" : "Pendente",
+                    pessoa.getNascimento()
+            );
+        }).toList();
     }
 
     public List<Inscricao> buscarInscricoesPorPessoa(Long pessoaId) {
         return inscricaoRepository.findByPessoaId(pessoaId);
+    }
+
+    public List<Inscricao> listarTodasInscricoes(Long encontroId) {
+        return inscricaoRepository.findByEncontroId(encontroId);
+    }
+
+    public ResumoInscricoesEncontro buscarDadosInscricoesEncontro(Long encontroId) {
+        Encontro encontro = encontroRepository.findById(encontroId)
+                .orElseThrow(() -> new RuntimeException("Encontro não encontrado."));
+
+        List<Inscricao> inscricoes = listarTodasInscricoes(encontro.getId());
+        int total = inscricoes.size();
+        int pagos = 0, naoPagos = 0, servos = 0, participantes = 0;
+
+        for (Inscricao inscricao : inscricoes) {
+            if (inscricao.isPago()) {
+                pagos++;
+            } else {
+                naoPagos++;
+            }
+
+            if (inscricao.getPessoa().getTipo() == Pessoa.TipoPessoa.SERVO) {
+                servos++;
+            } else if (inscricao.getPessoa().getTipo() == Pessoa.TipoPessoa.PARTICIPANTE) {
+                participantes++;
+            }
+        }
+
+        return new ResumoInscricoesEncontro(total, pagos, naoPagos, servos, participantes);
     }
 }
