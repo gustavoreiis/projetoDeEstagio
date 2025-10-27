@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
-public class InscricaoResumoDto {
+public class InscricaoTabelaDto {
     private Long id;
     private String nome;
     private String telefone;

@@ -1,3 +1,7 @@
 .border-top-vermelho {
     border-top: 7px solid #B53534;
 }
+
+.bi-branco i{
+  color: white;
+}

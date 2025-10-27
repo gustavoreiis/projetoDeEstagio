@@ -1,7 +1,8 @@
 package estagio.estagio.Service;
 
+import estagio.estagio.dto.DetalhesInscricaoPessoaDto;
 import estagio.estagio.dto.InscricaoRequest;
-import estagio.estagio.dto.InscricaoResumoDto;
+import estagio.estagio.dto.InscricaoTabelaDto;
 import estagio.estagio.dto.ResumoInscricoesEncontro;
 import estagio.estagio.entity.*;
 import estagio.estagio.repository.EncontroRepository;
@@ -70,7 +71,7 @@ public class InscricaoService {
         Inscricao inscricao = new Inscricao();
         inscricao.setPessoa(pessoa);
         inscricao.setEncontro(encontro);
-        inscricao.setDataInscricao(LocalDateTime.now());
+        inscricao.setDataInscricao(LocalDate.now());
 
         //enviarInformacoesPagamento(request.pessoa, request.encontroId);
 
@@ -139,7 +140,7 @@ public class InscricaoService {
         inscricaoRepository.deleteById(inscricaoId);
     }
 
-    public List<InscricaoResumoDto> listarInscricoesResumidas(Long encontroId) {
+    public List<InscricaoTabelaDto> listarInscricoesTabela(Long encontroId) {
         List<Inscricao> inscricoes = inscricaoRepository.findByEncontroId(encontroId);
 
         return inscricoes.stream().map(inscricao -> {
@@ -149,7 +150,7 @@ public class InscricaoService {
                     ? String.valueOf(pessoa.getMinisterio())
                     : "Participante";
 
-            return new InscricaoResumoDto(
+            return new InscricaoTabelaDto(
                     inscricao.getId(),
                     pessoa.getNome(),
                     pessoa.getTelefone(),
@@ -191,5 +192,26 @@ public class InscricaoService {
         }
 
         return new ResumoInscricoesEncontro(total, pagos, naoPagos, servos, participantes);
+    }
+
+    public DetalhesInscricaoPessoaDto buscarDetalhesInscricao(Long idInscricao) {
+        Inscricao inscricao = inscricaoRepository.findById(idInscricao)
+                .orElseThrow(() -> new RuntimeException("inscrição não encontrada."));
+
+        Pessoa pessoa = inscricao.getPessoa();
+        Responsavel responsavel = pessoa.getResponsavel();
+        String nomeResponsavel = responsavel != null ? responsavel.getNome() : null;
+        String telefoneResponsavel = responsavel != null ? responsavel.getTelefone() : null;
+
+        return new DetalhesInscricaoPessoaDto(
+                pessoa.getEmail(),
+                inscricao.getDataInscricao(),
+                pessoa.getEndereco(),
+                nomeResponsavel,
+                telefoneResponsavel,
+                inscricao.isAutorizado() ? "Autorizado" : "Pendente",
+                inscricao.getArquivoAutorizacao(),
+                pessoa.getObservacao()
+        );
     }
 }

@@ -1,5 +1,5 @@
 function voltarEncontro() {
-  window.location.href = `/html/visualizarEncontro.html?id=${idEncontro}`;
+    window.location.href = `/html/visualizarEncontro.html?id=${idEncontro}`;
 }
 
 const params = new URLSearchParams(window.location.search);
@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     const inscricoesResponse = await fetch(`http://localhost:8080/inscricoes/encontro/${idEncontro}`);
     const inscricoes = await inscricoesResponse.json();
     preencherListaInscricoes(inscricoes);
-
 });
 
 function preencherResumo(resumo) {
@@ -36,34 +35,73 @@ function preencherResumo(resumo) {
 }
 
 function preencherListaInscricoes(inscricoes) {
-    if (inscricoes.length == 0) {
+    if (inscricoes.length === 0) {
         document.getElementById('lista-vazio').classList.remove('d-none');
         return;
     }
 
     const tabela = document.getElementById('tabelaInscritos');
     inscricoes.forEach(inscricao => {
-        let badge;
-        if (inscricao == 'Concluído') {
-            badge = 'bg-success';
+        const tr = document.createElement('tr');
+        const badge = inscricao.pago === 'Concluído' ? 'bg-success' : 'bg-secondary';
+        tr.innerHTML = `
+            <td class="text-center">${inscricao.nome}</td>
+            <td class="text-center">${formatarTelefone(inscricao.telefone)}</td>
+            <td class="text-center">${inscricao.grupo}</td>
+            <td class="text-center"><span class="badge ${badge}">${inscricao.pago}</span></td>
+            <td class="text-center">${formatarData(inscricao.dataNascimento)}</td>
+            <td class="text-center">
+                <button class="btn vermelho-border" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button id="enviarEmail${inscricao.id}" class="btn vermelho-border" title="Reenviar e-mail de pagamento">
+                    <i class="bi bi-envelope"></i>
+                </button>
+            </td>
+        `;
+
+        const btnDetalhes = tr.querySelector('button[data-bs-target="#modalDetalhes"]');
+        btnDetalhes.addEventListener('click', () => carregardetalhesInscricao(inscricao));
+
+        const btnEmail = tr.querySelector(`#enviarEmail${inscricao.id}`);
+        if (inscricao.pago === 'Concluído') {
+            btnEmail.style.opacity = '0.5';
+            btnEmail.addEventListener('click', () => {
+                mostrarToast('Inscrição já paga!', 'Este participante já realizou o pagamento.');
+            });
         } else {
-            badge = 'bg-secondary';
+            btnEmail.addEventListener('click', () => enviarEmail(inscricao.id));
         }
-        const item = `
-            <tr>
-                <td class="text-center">${inscricao.nome}</td>
-                <td class="text-center">${formatarTelefone(inscricao.telefone)}</td>
-                <td class="text-center">${inscricao.grupo}</td>
-                <td class="text-center"><span class="badge ${badge}">${inscricao.pago}</span></td>
-                <td class="text-center">${formatarData(inscricao.dataNascimento)}</td>
-                <td class="text-center">
-                    <button class="btn vermelho-border" data-bs-toggle="modal" data-bs-target="#modalDetalhes"><i class="bi bi-eye"></i></button>
-                    <button class="btn vermelho-border" title="Reenviar e-mail de pagamento"><i class="bi bi-envelope"></i></button>
-                </td>
-            </tr>
-        `
-        tabela.innerHTML += item;
+        tabela.appendChild(tr);
     });
+}
+
+async function carregardetalhesInscricao(inscricao) {
+    document.getElementById("nomeInscrito").value = inscricao.nome;
+    document.getElementById("telefoneInscrito").value = formatarTelefone(inscricao.telefone);
+    document.getElementById("grupoInscrito").value = inscricao.grupo;
+    document.getElementById("dataNascimentoInscrito").value = formatarData(inscricao.dataNascimento);
+    document.getElementById("pagamentoInscrito").value = inscricao.pago;
+
+    const response = await fetch(`http://localhost:8080/inscricoes/${inscricao.id}`)
+    const detalhes = await response.json();
+
+    document.getElementById("emailInscrito").value = detalhes.email;
+    document.getElementById("dataInscricao").value = formatarData(detalhes.dataInscricao);
+    document.getElementById("enderecoInscrito").value = detalhes.endereco;
+    document.getElementById("autorizacaoInscrito").value = detalhes.statusAutorizado;
+    document.getElementById("observacaoInscrito").value = detalhes.observacao;
+
+    if (detalhes.nomeResponsavel == null) {
+        document.getElementById("camposResponsavel").classList.add("d-none");
+    } else {
+        document.getElementById("nomeResponsavel").value = detalhes.nomeResponsavel;
+        document.getElementById("telefoneResponsavel").value = formatarTelefone(detalhes.telefoneResponsavel);
+    }
+}
+
+async function enviarEmail(idInscricao) {
+    console.log(`Enviando e-mail para inscrição ID: ${idInscricao}`);
 }
 
 
@@ -76,9 +114,21 @@ function preencherListaInscricoes(inscricoes) {
 
 
 
-
-
-
+function mostrarToast(titulo, mensagem) {
+    const toastContainer = document.getElementById('toastContainer');
+    toastContainer.innerHTML = `
+    <div class="toast align-items-center text-bg-secondary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          <strong>${titulo}</strong><br>${mensagem}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `;
+    const toast = new bootstrap.Toast(toastContainer.querySelector('.toast'));
+    toast.show();
+}
 
 
 function formatarTelefone(telefone) {
@@ -101,20 +151,3 @@ function formatarData(data) {
 
     return `${dia}/${mes}/${ano}`;
 }
-
-
-/*
-<tr>
-    <td>Maria Silva</td>
-    <td>123.456.789-00</td>
-    <td>(11) 99999-9999</td>
-    <td>Participante</td>
-    <td><span class="badge bg-success">Concluído</span></td>
-    <td>12/10/2025</td>
-    <td>
-        <button class="btn vermelho-border" data-bs-toggle="modal"
-            data-bs-target="#modalDetalhes"><i class="bi bi-eye"></i></button>
-        <button class="btn vermelho-border" title="Reenviar e-mail de pagamento"><i
-                class="bi bi-envelope"></i></button>
-    </td>
-</tr>*/

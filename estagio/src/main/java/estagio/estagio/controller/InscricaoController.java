@@ -1,8 +1,9 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.InscricaoService;
+import estagio.estagio.dto.DetalhesInscricaoPessoaDto;
 import estagio.estagio.dto.InscricaoRequest;
-import estagio.estagio.dto.InscricaoResumoDto;
+import estagio.estagio.dto.InscricaoTabelaDto;
 import estagio.estagio.dto.ResumoInscricoesEncontro;
 import estagio.estagio.entity.Inscricao;
 import jakarta.validation.Valid;
@@ -33,15 +34,15 @@ public class InscricaoController {
         }
     }
 
-    @DeleteMapping("/{idInscricao}")
-    public ResponseEntity<Void> cancelarinscricao(@PathVariable Long idInscricao) {
-        inscricaoService.cancelarInscricao(idInscricao);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{idInscricao}")
+//    public ResponseEntity<Void> cancelarinscricao(@PathVariable Long idInscricao) {
+//        inscricaoService.cancelarInscricao(idInscricao);
+//        return ResponseEntity.noContent().build();
+//    }
 
     @GetMapping("/encontro/{idEncontro}")
-    public ResponseEntity<List<InscricaoResumoDto>> listarInscricoesEncontro(@PathVariable Long idEncontro) {
-        List<InscricaoResumoDto> inscricoes = inscricaoService.listarInscricoesResumidas(idEncontro);
+    public ResponseEntity<List<InscricaoTabelaDto>> listarInscricoesEncontro(@PathVariable Long idEncontro) {
+        List<InscricaoTabelaDto> inscricoes = inscricaoService.listarInscricoesTabela(idEncontro);
         return ResponseEntity.ok(inscricoes);
     }
 
@@ -51,9 +52,15 @@ public class InscricaoController {
         return ResponseEntity.ok(resumo);
     }
 
-    @GetMapping("/participante/{idPessoa}")
-    public ResponseEntity<List<Inscricao>> listarPorPessoa(@PathVariable Long idPessoa) {
-        List<Inscricao> inscricoes = inscricaoService.buscarInscricoesPorPessoa(idPessoa);
-        return ResponseEntity.ok(inscricoes);
+    @GetMapping("/{idInscricao}")
+    public ResponseEntity<DetalhesInscricaoPessoaDto> obterDetalhesInscricao(@PathVariable Long idInscricao) {
+        DetalhesInscricaoPessoaDto detalhes = inscricaoService.buscarDetalhesInscricao(idInscricao);
+        return ResponseEntity.ok(detalhes);
     }
+
+//    @GetMapping("/participante/{idPessoa}")
+//    public ResponseEntity<List<Inscricao>> listarPorPessoa(@PathVariable Long idPessoa) {
+//        List<Inscricao> inscricoes = inscricaoService.buscarInscricoesPorPessoa(idPessoa);
+//        return ResponseEntity.ok(inscricoes);
+//    }
 }

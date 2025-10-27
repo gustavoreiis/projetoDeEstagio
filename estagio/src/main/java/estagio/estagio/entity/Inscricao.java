@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,8 +34,11 @@ public class Inscricao {
     private boolean autorizado;
 
     @Column(nullable = true)
+    private String arquivoAutorizacao;
+
+    @Column(nullable = true)
     private boolean pago;
 
     @Column(nullable = false)
-    private LocalDateTime dataInscricao;
+    private LocalDate dataInscricao;
 }

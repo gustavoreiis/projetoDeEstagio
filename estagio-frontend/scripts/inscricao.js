@@ -219,22 +219,23 @@ document.querySelectorAll('.cpf').forEach(input => {
   });
 });
 
-const telefoneInput = document.getElementById('telefone');
+document.querySelectorAll('input[type="tel"], .telefone').forEach(input => {
+  input.addEventListener('input', function (e) {
+    let valor = e.target.value.replace(/\D/g, '');
+    valor = valor.substring(0, 11);
 
-telefoneInput.addEventListener('input', function (e) {
-  let valor = e.target.value.replace(/\D/g, '');
-  valor = valor.substring(0, 11);
-
-  if (valor.length > 2 && valor.length <= 10) {
-    if (valor.length > 6) {
-      valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '$1 $2-$3');
-    } else {
-      valor = valor.replace(/^(\d{2})(\d{0,4})$/, '$1 $2');
+    if (valor.length > 2 && valor.length <= 10) {
+      if (valor.length > 6) {
+        valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '$1 $2-$3');
+      } else {
+        valor = valor.replace(/^(\d{2})(\d{0,4})$/, '$1 $2');
+      }
+    } else if (valor.length === 11) {
+      valor = valor.replace(/^(\d{2})(\d{5})(\d{0,4})$/, '$1 $2-$3');
     }
-  } else if (valor.length === 11) {
-    valor = valor.replace(/^(\d{2})(\d{5})(\d{0,4})$/, '$1 $2-$3');
-  }
-  e.target.value = valor;
+
+    e.target.value = valor;
+  });
 });
 
 function limparFormatacao(valor) {
