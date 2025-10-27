@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
-    Optional<Pessoa> findByCpf(String cpf);
+    UserDetails findByCpf(String cpf);
+    Optional<Pessoa> findPessoaByCpf(String cpf);
     List<Pessoa> findByTipo(Pessoa.TipoPessoa tipo);
     List<Pessoa> findByMinisterio(Pessoa.Ministerio ministerio);
 

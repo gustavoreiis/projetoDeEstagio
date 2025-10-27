@@ -27,12 +27,14 @@ public class EncontroService {
     private final GrupoService grupoService;
     private final String uploadDir = "uploads"; // Pasta de destino
     private final InscricaoRepository inscricaoRepository;
+    private final ArquivoService arquivoService;
 
-    public EncontroService(GrupoService grupoService, EncontroRepository encontroRepository, GrupoRepository grupoRepository, InscricaoRepository inscricaoRepository) {
+    public EncontroService(GrupoService grupoService, EncontroRepository encontroRepository, GrupoRepository grupoRepository, InscricaoRepository inscricaoRepository, ArquivoService arquivoService) {
         this.grupoService = grupoService;
         this.encontroRepository = encontroRepository;
         this.grupoRepository = grupoRepository;
         this.inscricaoRepository = inscricaoRepository;
+        this.arquivoService = arquivoService;
     }
 
     public Encontro criarEncontro(String titulo, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, String local, float preco, String descricao, MultipartFile capa) {
@@ -46,7 +48,7 @@ public class EncontroService {
         encontro.setAberto(true);
 
         if (capa != null && !capa.isEmpty()) {
-            String caminhoCapa = salvarArquivo(capa);
+            String caminhoCapa = arquivoService.salvarArquivo(capa);
             encontro.setCapa(caminhoCapa);
         }
         return encontroRepository.save(encontro);
@@ -80,8 +82,8 @@ public class EncontroService {
         encontro.setPreco(preco);
 
         if (capa != null && !capa.isEmpty()) {
-            deletarArquivo(encontro.getCapa());
-            String caminhoImagem = salvarArquivo(capa);
+            arquivoService.deletarArquivo(encontro.getCapa());
+            String caminhoImagem = arquivoService.salvarArquivo(capa);
             encontro.setCapa(caminhoImagem);
         }
         return encontroRepository.save(encontro);
@@ -93,7 +95,7 @@ public class EncontroService {
         List<Grupo> grupos = grupoRepository.findByEncontroId(idEncontro);
         List<Inscricao> inscricoes = inscricaoRepository.findByEncontroId(idEncontro);
 
-        deletarArquivo(encontro.getCapa());
+        arquivoService.deletarArquivo(encontro.getCapa());
         for (Grupo grupo : grupos) {
             grupoService.excluirGrupo(grupo.getId());
         }
@@ -101,31 +103,5 @@ public class EncontroService {
         encontroRepository.delete(encontro);
     }
 
-    public void deletarArquivo(String urlImagem) {
-        try {
-            String nomeArquivo = urlImagem.substring(urlImagem.lastIndexOf("/") + 1);
-            nomeArquivo = URLDecoder.decode(nomeArquivo, StandardCharsets.UTF_8);
 
-            Path caminhoArquivo = Paths.get(System.getProperty("user.dir"), "imagens", nomeArquivo);
-            Files.deleteIfExists(caminhoArquivo);
-        } catch (Exception e) {
-            System.out.println("Erro ao deletar imagem: " + e.getMessage());
-        }
-    }
-
-    public String salvarArquivo(MultipartFile arquivo) {
-        Path pastaUploads = Paths.get(System.getProperty("user.dir"), "imagens");
-        try {
-            if (!Files.exists(pastaUploads)) {
-                Files.createDirectories(pastaUploads);
-            }
-            String nomeArquivo = System.currentTimeMillis() + "_" + arquivo.getOriginalFilename();
-            Path arquivoDestino = pastaUploads.resolve(nomeArquivo);
-            arquivo.transferTo(arquivoDestino.toFile());
-
-            return "http://localhost:8080/imagens/" + nomeArquivo;
-        } catch (IOException e) {
-            throw new RuntimeException("Falha ao salvar o arquivo.", e);
-        }
-    }
 }

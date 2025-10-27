@@ -8,6 +8,9 @@ import estagio.estagio.repository.PessoaRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class AuthService {
+public class AuthService implements UserDetailsService {
 
     private final PessoaRepository pessoaRepository;
     private final PessoaService pessoaService;
@@ -30,7 +33,7 @@ public class AuthService {
 
     public ResponseEntity<?> login(LoginRequest request) {
 
-        Optional<Pessoa> pessoaOpt = pessoaRepository.findByCpf(request.getCpf());
+        Optional<Pessoa> pessoaOpt = pessoaRepository.findPessoaByCpf(request.getCpf());
 
         if (pessoaOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("CPF não encontrado");
@@ -59,7 +62,7 @@ public class AuthService {
 
     public Pessoa cadastrarSenha(SenhaDto senhaDto) {
         System.out.println(senhaDto.getCpf());
-        Pessoa pessoa = pessoaRepository.findByCpf(senhaDto.getCpf())
+        Pessoa pessoa = pessoaRepository.findPessoaByCpf(senhaDto.getCpf())
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada para o CPF informado."));
 
         pessoa.setCoordenador(Pessoa.StatusCoordenador.PENDENTE);
@@ -77,7 +80,7 @@ public class AuthService {
             return response;
         }
 
-        Optional<Pessoa> pessoaOpt = pessoaRepository.findByCpf(cpf);
+        Optional<Pessoa> pessoaOpt = pessoaRepository.findPessoaByCpf(cpf);
 
         if (pessoaOpt.isPresent()) {
             Pessoa pessoa = pessoaOpt.get();
@@ -137,4 +140,8 @@ public class AuthService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
+        return pessoaRepository.findByCpf(cpf);
+    }
 }

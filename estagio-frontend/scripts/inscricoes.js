@@ -101,18 +101,10 @@ async function carregardetalhesInscricao(inscricao) {
 }
 
 async function enviarEmail(idInscricao) {
-    console.log(`Enviando e-mail para inscrição ID: ${idInscricao}`);
+    console.log(".");
+    const response = await fetch(`http://localhost:8080/inscricoes/email/${idInscricao}`);
+    const emailEnviado = response.json();
 }
-
-
-
-
-
-
-
-
-
-
 
 function mostrarToast(titulo, mensagem) {
     const toastContainer = document.getElementById('toastContainer');

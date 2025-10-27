@@ -35,7 +35,7 @@ public class PessoaService {
     }
 
     public Optional<Pessoa> buscarPessoaPorCpf(String cpf) {
-        return pessoaRepository.findByCpf(cpf);
+        return pessoaRepository.findPessoaByCpf(cpf);
     }
 
     public List<Pessoa> buscarPessoas() {
@@ -81,7 +81,7 @@ public class PessoaService {
     }
 
     public Optional<Pessoa> findByCpf(String cpf) {
-        return pessoaRepository.findByCpf(cpf);
+        return pessoaRepository.findPessoaByCpf(cpf);
     }
 
     public List<Pessoa> buscarLideres(Long idEncontro, Pessoa.TipoPessoa tipo) {

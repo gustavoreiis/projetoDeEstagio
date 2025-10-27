@@ -93,8 +93,7 @@ document.getElementById('tipo').addEventListener('change', function () {
 function inscrever(dados) {
   fetch("http://localhost:8080/inscricoes", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dados),
+    body: dados
   })
     .then(response => {
       if (!response.ok) {
@@ -130,6 +129,7 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
     tipo: document.getElementById('tipo').value,
     ministerio: document.getElementById('tipo').value === 'SERVO' ? document.getElementById('ministerio').value : null
   };
+  console.log(pessoa.nascimento);
 
   const encontroId = new URLSearchParams(window.location.search).get('encontro');
 
@@ -142,13 +142,16 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
     };
   }
 
-  const inscricao = {
+  const arquivoAutorizacao = document.getElementById('autorizacaoArquivo').files[0];
+  const formData = new FormData();
+  formData.append('inscricao', JSON.stringify({
     pessoa: pessoa,
     encontroId: parseInt(encontroId),
-    responsavel: responsavel
-  };
+    responsavel: responsavel,
+  }));
+  formData.append('autorizacao', arquivoAutorizacao);
 
-  inscrever(inscricao);
+  inscrever(formData);
 });
 
 function mostrarErroModal(mensagem) {
@@ -249,6 +252,7 @@ function telefoneValido(telefone) {
 
 document.addEventListener("DOMContentLoaded", function () {
   const hoje = new Date().toISOString().split("T")[0];
+  document.getElementById("modalNascimento").setAttribute("max", hoje);
   document.getElementById("nascimento").setAttribute("max", hoje);
 
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');

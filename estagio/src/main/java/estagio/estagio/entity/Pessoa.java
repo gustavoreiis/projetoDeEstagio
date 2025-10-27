@@ -1,11 +1,17 @@
 package estagio.estagio.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "pessoas")
@@ -13,8 +19,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Pessoa {
+public class Pessoa implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_pessoa")
@@ -65,13 +70,40 @@ public class Pessoa {
     @Column(nullable = true)
     private boolean ativo;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.coordenador == StatusCoordenador.COORDENADOR) return List.of(new SimpleGrantedAuthority("ROLE_COORDENADOR"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return cpf;
+    }
+
     public enum Ministerio {
-        ARTES,
-        COMUNICACAO_SOCIAL,
-        INTERCESSAO,
-        MUSICA,
-        PREGACAO,
-        PROMOCAO_HUMANA
+        ARTES("Artes"),
+        COMUNICACAO_SOCIAL("Comunicação Social"),
+        INTERCESSAO("Intercessão"),
+        MUSICA("Música"),
+        PREGACAO("Pregação"),
+        PROMOCAO_HUMANA("Promoção Humana");
+
+        private final String nomeFormatado;
+
+        Ministerio(String nomeFormatado) {
+            this.nomeFormatado = nomeFormatado;
+        }
+
+        @JsonValue
+        public String getNomeFormatado() {
+            return nomeFormatado;
+        }
     }
 
     public enum Sexo {

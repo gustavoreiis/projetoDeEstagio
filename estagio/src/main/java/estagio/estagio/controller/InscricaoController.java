@@ -1,5 +1,6 @@
 package estagio.estagio.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import estagio.estagio.Service.InscricaoService;
 import estagio.estagio.dto.DetalhesInscricaoPessoaDto;
 import estagio.estagio.dto.InscricaoRequest;
@@ -9,6 +10,7 @@ import estagio.estagio.entity.Inscricao;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,14 +25,25 @@ public class InscricaoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> inscreverPessoa(@RequestBody @Valid InscricaoRequest request) {
+    public ResponseEntity<?> inscreverPessoa(
+            @RequestPart("inscricao") String inscricaoJson,  // Recebe dados JSON como String
+            @RequestPart(value = "autorizacao", required = false) MultipartFile autorizacao) {  // Recebe o arquivo
+
         try {
-            Inscricao inscricao = inscricaoService.inscreverParticipante(request);
+            // Deserializando o JSON recebido em InscricaoRequest
+            ObjectMapper objectMapper = new ObjectMapper();
+            InscricaoRequest inscricaoRequest = objectMapper.readValue(inscricaoJson, InscricaoRequest.class);
+
+            inscricaoRequest.setAutorizacao(autorizacao);
+
+            // Agora você pode processar a inscrição com o arquivo
+            Inscricao inscricao = inscricaoService.inscreverParticipante(inscricaoRequest);
+
             return ResponseEntity.ok(inscricao);
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
             return ResponseEntity
                     .badRequest()
-                    .body(ex.getMessage());
+                    .body("Erro ao processar a inscrição: " + ex.getMessage());
         }
     }
 
@@ -56,6 +69,12 @@ public class InscricaoController {
     public ResponseEntity<DetalhesInscricaoPessoaDto> obterDetalhesInscricao(@PathVariable Long idInscricao) {
         DetalhesInscricaoPessoaDto detalhes = inscricaoService.buscarDetalhesInscricao(idInscricao);
         return ResponseEntity.ok(detalhes);
+    }
+
+    @GetMapping("/email/{idInscricao}")
+    public ResponseEntity<Void> enviarInformacoesPagamento(@PathVariable Long idInscricao) {
+        inscricaoService.reenviarInformacoesPagamento(idInscricao);
+        return ResponseEntity.noContent().build();
     }
 
 //    @GetMapping("/participante/{idPessoa}")

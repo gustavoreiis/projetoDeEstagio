@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,8 @@ public class InscricaoService {
     private AuthService authService;
     @Autowired
     private EncontroRepository encontroRepository;
+    @Autowired
+    private ArquivoService arquivoService;
 
     public Inscricao inscreverParticipante(InscricaoRequest request) {
 
@@ -54,7 +57,7 @@ public class InscricaoService {
         Pessoa pessoaRequest = request.getPessoa();
         Responsavel responsavelRequest = request.getResponsavel();
 
-        Optional<Pessoa> pessoaExistenteOpt = pessoaRepository.findByCpf(pessoaRequest.getCpf());
+        Optional<Pessoa> pessoaExistenteOpt = pessoaRepository.findPessoaByCpf(pessoaRequest.getCpf());
         Pessoa pessoa;
 
         if (pessoaExistenteOpt.isPresent()) {
@@ -72,6 +75,12 @@ public class InscricaoService {
         inscricao.setPessoa(pessoa);
         inscricao.setEncontro(encontro);
         inscricao.setDataInscricao(LocalDate.now());
+
+        if (request.getAutorizacao() != null && !request.getAutorizacao().isEmpty()) {
+            String caminhoArquivo = arquivoService.salvarArquivo(request.getAutorizacao());
+
+            inscricao.setArquivoAutorizacao(caminhoArquivo);
+        }
 
         //enviarInformacoesPagamento(request.pessoa, request.encontroId);
 
@@ -101,10 +110,22 @@ public class InscricaoService {
                     + "<p>Equipe Grupo Musa</p>"
                     + "</body></html>";
             helper.setText(corpo, true);
+            System.out.println("Preparando para enviar e-mail..." + destinatario.getEmail());
             mailSender.send(email);
+            System.out.println("Teste");
         } catch (Exception e) {
+            System.out.println("Erro");
             e.printStackTrace();
         }
+    }
+
+    public void reenviarInformacoesPagamento(Long idInscricao) {
+        Inscricao inscricao = inscricaoRepository.findById(idInscricao)
+                .orElseThrow(() -> new RuntimeException("Inscrição não encontrada."));
+
+        Pessoa destinatario = inscricao.getPessoa();
+        Long idEncontro = inscricao.getEncontro().getId();
+        enviarInformacoesPagamento(destinatario, idEncontro);
     }
 
     public void verificarJaInscrito(Pessoa pessoa, Long encontroId) {
@@ -147,7 +168,7 @@ public class InscricaoService {
             var pessoa = inscricao.getPessoa();
 
             String grupo = pessoa.getTipo() == Pessoa.TipoPessoa.SERVO
-                    ? String.valueOf(pessoa.getMinisterio())
+                    ? String.valueOf(pessoa.getMinisterio().getNomeFormatado())
                     : "Participante";
 
             return new InscricaoTabelaDto(
