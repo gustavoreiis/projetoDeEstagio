@@ -127,6 +127,12 @@
                             <option value="">Todos</option>
                             <option value="Participante">Participante</option>
                             <option value="Servo">Servo</option>
+                            <option value="Artes">Artes</option>
+                            <option value="Comunicação Social">Comunicação Social</option>
+                            <option value="Intercessão">Intrcessão</option>
+                            <option value="Música">Música</option>
+                            <option value="Pregação">Pregação</option>
+                            <option value="Promoção Humana">Promoção Humana</option>
                         </select>
                     </div>
                     <div class="col-md-8">
@@ -294,6 +300,26 @@
                         id="salvarAlteracoes">Salvar Alterações</button>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmarEnvioModal" tabindex="-1" aria-labelledby="confirmarEnvioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmarEnvioModalLabel">Confirmar Envio de E-mail</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    Deseja realmente enviar o e-mail de pagamento para este inscrito?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEnvioEmail">Confirmar Envio</button>
+                </div>
             </div>
         </div>
     </div>

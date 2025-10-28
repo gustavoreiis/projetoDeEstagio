@@ -16,14 +16,55 @@ if (idEncontro) {
         });
 }
 
+let inscricoesGlobais = [];
 document.addEventListener("DOMContentLoaded", async function () {
     const response = await fetch(`http://localhost:8080/inscricoes/encontro/${idEncontro}/resumo`);
     const resumo = await response.json();
     preencherResumo(resumo);
 
     const inscricoesResponse = await fetch(`http://localhost:8080/inscricoes/encontro/${idEncontro}`);
-    const inscricoes = await inscricoesResponse.json();
-    preencherListaInscricoes(inscricoes);
+    inscricoesGlobais = await inscricoesResponse.json();
+    preencherListaInscricoes(inscricoesGlobais);
+});
+
+function aplicarFiltros() {
+    const nomeBusca = document.getElementById("pesquisarNome").value.toLowerCase();
+    const grupoSelecionado = document.getElementById("tipoFiltro").value;
+    const pagamentoSelecionado = document.querySelector('input[name="pagamentoFiltro"]:checked').value;
+
+    const filtradas = inscricoesGlobais.filter(inscricao => {
+        const nomeMatch = inscricao.nome.toLowerCase().includes(nomeBusca);
+
+        let grupoMatch = true;
+        if (grupoSelecionado === "Participante") {
+            grupoMatch = inscricao.grupo === "Participante";
+        }
+        else if (grupoSelecionado === "Servo") {
+            grupoMatch = inscricao.grupo !== "Participante";
+        }
+        else if (grupoSelecionado !== "") {
+            grupoMatch = inscricao.grupo === grupoSelecionado;
+        }
+
+        let pagamentoMatch = true;
+        if (pagamentoSelecionado === "Concluído") {
+            pagamentoMatch = inscricao.pago === true || inscricao.pago === "Concluído";
+        } else if (pagamentoSelecionado === "Pendente") {
+            pagamentoMatch = inscricao.pago === false || inscricao.pago === "Pendente";
+        }
+
+        return nomeMatch && grupoMatch && pagamentoMatch;
+    });
+
+    const tabela = document.getElementById('tabelaInscritos');
+    tabela.innerHTML = "";
+    preencherListaInscricoes(filtradas);
+}
+
+document.getElementById("pesquisarNome").addEventListener("input", aplicarFiltros);
+document.getElementById("tipoFiltro").addEventListener("change", aplicarFiltros);
+document.querySelectorAll('input[name="pagamentoFiltro"]').forEach(radio => {
+    radio.addEventListener("change", aplicarFiltros);
 });
 
 function preencherResumo(resumo) {
@@ -39,6 +80,7 @@ function preencherListaInscricoes(inscricoes) {
         document.getElementById('lista-vazio').classList.remove('d-none');
         return;
     }
+    document.getElementById('lista-vazio').classList.add('d-none');
 
     const tabela = document.getElementById('tabelaInscritos');
     inscricoes.forEach(inscricao => {
@@ -70,13 +112,20 @@ function preencherListaInscricoes(inscricoes) {
                 mostrarToast('Inscrição já paga!', 'Este participante já realizou o pagamento.');
             });
         } else {
-            btnEmail.addEventListener('click', () => enviarEmail(inscricao.id));
-        }
+            btnEmail.addEventListener('click', () => {
+                inscricaoSelecionadaId = inscricao.id;
+                const modal = new bootstrap.Modal(document.getElementById('confirmarEnvioModal'));
+                modal.show();
+            }
+            )
+        };
         tabela.appendChild(tr);
     });
 }
 
 async function carregardetalhesInscricao(inscricao) {
+    document.getElementById("formDetalhes").dataset.idInscricao = inscricao.id;
+
     document.getElementById("nomeInscrito").value = inscricao.nome;
     document.getElementById("telefoneInscrito").value = formatarTelefone(inscricao.telefone);
     document.getElementById("grupoInscrito").value = inscricao.grupo;
@@ -95,13 +144,79 @@ async function carregardetalhesInscricao(inscricao) {
     if (detalhes.nomeResponsavel == null) {
         document.getElementById("camposResponsavel").classList.add("d-none");
     } else {
+        document.getElementById("camposResponsavel").classList.remove("d-none");
         document.getElementById("nomeResponsavel").value = detalhes.nomeResponsavel;
         document.getElementById("telefoneResponsavel").value = formatarTelefone(detalhes.telefoneResponsavel);
     }
+
+    const container = document.getElementById("arquivoAutorizacaoContainer");
+    container.innerHTML = "";
+
+    if (detalhes.autorizacao) {
+
+        const link = document.createElement("a");
+        link.href = detalhes.autorizacao;
+        link.target = "_blank";
+        link.classList.add("btn", "branco-hover", "btn-sm");
+        link.innerHTML = '<i class="bi bi-eye"></i> Visualizar Autorização';
+
+        container.appendChild(link);
+    } else {
+        container.innerHTML = `<p class="text-muted mb-0 small">Nenhum arquivo anexado.</p>`;
+    }
 }
 
+document.getElementById('salvarAlteracoes').addEventListener('click', async function () {
+    const form = document.getElementById("formDetalhes");
+    const idInscricao = form.dataset.idInscricao;
+
+    if (!idInscricao) {
+        mostrarToast("Erro", "Nenhuma inscrição selecionada.");
+        return;
+    }
+
+    const dadosAtualizados = {
+        pago: document.getElementById("pagamentoInscrito").value === "Concluído",
+        statusAutorizado: document.getElementById("autorizacaoInscrito").value === "Autorizado",
+        observacao: document.getElementById("observacaoInscrito").value
+    };
+
+    try {
+        const response = await fetch(`http://localhost:8080/inscricoes/${idInscricao}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosAtualizados)
+        });
+
+        if (response.ok) {
+            mostrarToast("Sucesso", "Alterações salvas com sucesso.");
+            const modal = bootstrap.Modal.getInstance(document.getElementById("modalDetalhes"));
+            modal.hide();
+            window.location.reload();
+        } else {
+            const erro = await response.text();
+            mostrarToast("Erro", `Falha ao salvar alterações: ${erro}`);
+        }
+    } catch (error) {
+        mostrarToast("Erro", `Erro ao salvar alterações: ${error.message}`);
+    }
+});
+
+document.getElementById('confirmarEnvioEmail').addEventListener('click', async function () {
+    if (!inscricaoSelecionadaId) return;
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("confirmarEnvioModal"));
+    modal.hide();
+
+    await enviarEmail(inscricaoSelecionadaId);
+    mostrarToast("E-mail enviado com sucesso!", "O e-mail de pagamento foi reenviado ao inscrito.");
+
+    inscricaoSelecionadaId = null;
+});
+
 async function enviarEmail(idInscricao) {
-    console.log(".");
     const response = await fetch(`http://localhost:8080/inscricoes/email/${idInscricao}`);
     const emailEnviado = response.json();
 }
@@ -122,7 +237,6 @@ function mostrarToast(titulo, mensagem) {
     toast.show();
 }
 
-
 function formatarTelefone(telefone) {
     telefone = telefone.replace(/\D/g, '');
 
@@ -134,6 +248,7 @@ function formatarTelefone(telefone) {
         return telefone;
     }
 }
+
 function formatarData(data) {
     const partesData = data.split('-');
 

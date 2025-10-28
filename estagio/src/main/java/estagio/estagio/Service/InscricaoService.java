@@ -1,9 +1,6 @@
 package estagio.estagio.Service;
 
-import estagio.estagio.dto.DetalhesInscricaoPessoaDto;
-import estagio.estagio.dto.InscricaoRequest;
-import estagio.estagio.dto.InscricaoTabelaDto;
-import estagio.estagio.dto.ResumoInscricoesEncontro;
+import estagio.estagio.dto.*;
 import estagio.estagio.entity.*;
 import estagio.estagio.repository.EncontroRepository;
 import estagio.estagio.repository.InscricaoRepository;
@@ -87,6 +84,21 @@ public class InscricaoService {
         return inscricaoRepository.save(inscricao);
     }
 
+    public void atualizarInscricao(Long idInscricao, StatusInscricaoDto request) {
+        Inscricao inscricao = inscricaoRepository.findById(idInscricao)
+                .orElseThrow(() -> new RuntimeException("Inscrição não encontrada"));
+
+        Pessoa pessoa = pessoaRepository.findById(inscricao.getPessoa().getId())
+                        .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+
+        inscricao.setPago(request.isPago());
+        inscricao.setAutorizado(request.isAutorizado());
+        pessoa.setObservacao(request.getObservacao());
+
+        inscricaoRepository.save(inscricao);
+        pessoaRepository.save(pessoa);
+    }
+
     public void enviarInformacoesPagamento(Pessoa destinatario, Long encontroId) {
         Encontro encontro = encontroService.buscarEncontroPorId(encontroId).orElseThrow();
         try {
@@ -120,6 +132,7 @@ public class InscricaoService {
     }
 
     public void reenviarInformacoesPagamento(Long idInscricao) {
+        System.out.println(idInscricao);
         Inscricao inscricao = inscricaoRepository.findById(idInscricao)
                 .orElseThrow(() -> new RuntimeException("Inscrição não encontrada."));
 

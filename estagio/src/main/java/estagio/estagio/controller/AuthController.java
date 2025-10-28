@@ -10,6 +10,9 @@ import estagio.estagio.repository.PessoaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,10 +25,35 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private PessoaRepository pessoaRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return authService.login(request);
+    public ResponseEntity login(@RequestBody LoginRequest request) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(request.getCpf(), request.getSenha());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+
+        return ResponseEntity.ok().build();
+        //return authService.login(request);
+    }
+
+    @PostMapping("/cadastro")
+    public ResponseEntity cadastrarUsuario(@RequestBody @Valid Pessoa pessoa) {
+        if (pessoaRepository.findByCpf(pessoa.getCpf()) != null) return ResponseEntity.badRequest().build();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(pessoa.getSenha());
+
+        pessoa.setSenha(encryptedPassword);
+        pessoa.setTipo(Pessoa.TipoPessoa.SERVO);
+        pessoa.setCoordenador(Pessoa.StatusCoordenador.PENDENTE);
+        pessoaRepository.save(pessoa);
+
+        return ResponseEntity.ok().build();
+
+//        Pessoa novaPessoa = authService.cadastrarUsuario(pessoa);
+//        return ResponseEntity.ok(novaPessoa);
     }
 
     @GetMapping("/verificar-cpf")
@@ -36,12 +64,6 @@ public class AuthController {
 
         Map<String, Object> response = authService.verificarCpf(cpf, nascimento, encontroId);
         return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/cadastro")
-    public ResponseEntity<Pessoa> cadastrarUsuario(@RequestBody @Valid Pessoa pessoa) {
-        Pessoa novaPessoa = authService.cadastrarUsuario(pessoa);
-        return ResponseEntity.ok(novaPessoa);
     }
 
     @PostMapping("/cadastrar-senha")

@@ -124,7 +124,7 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
     email: document.getElementById('email').value,
     endereco: document.getElementById('endereco').value,
     nascimento: document.getElementById('nascimento').value,
-    genero: document.getElementById('genero').value,
+    sexo: document.getElementById('genero').value,
     observacao: document.getElementById('observacao').value,
     tipo: document.getElementById('tipo').value,
     ministerio: document.getElementById('tipo').value === 'SERVO' ? document.getElementById('ministerio').value : null

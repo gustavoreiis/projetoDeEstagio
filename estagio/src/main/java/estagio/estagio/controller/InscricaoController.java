@@ -1,13 +1,11 @@
 package estagio.estagio.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import estagio.estagio.Service.InscricaoService;
-import estagio.estagio.dto.DetalhesInscricaoPessoaDto;
-import estagio.estagio.dto.InscricaoRequest;
-import estagio.estagio.dto.InscricaoTabelaDto;
-import estagio.estagio.dto.ResumoInscricoesEncontro;
+import estagio.estagio.dto.*;
 import estagio.estagio.entity.Inscricao;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,13 +28,14 @@ public class InscricaoController {
             @RequestPart(value = "autorizacao", required = false) MultipartFile autorizacao) {  // Recebe o arquivo
 
         try {
-            // Deserializando o JSON recebido em InscricaoRequest
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+
             InscricaoRequest inscricaoRequest = objectMapper.readValue(inscricaoJson, InscricaoRequest.class);
 
             inscricaoRequest.setAutorizacao(autorizacao);
 
-            // Agora você pode processar a inscrição com o arquivo
             Inscricao inscricao = inscricaoService.inscreverParticipante(inscricaoRequest);
 
             return ResponseEntity.ok(inscricao);
@@ -82,4 +81,11 @@ public class InscricaoController {
 //        List<Inscricao> inscricoes = inscricaoService.buscarInscricoesPorPessoa(idPessoa);
 //        return ResponseEntity.ok(inscricoes);
 //    }
+
+
+    @PutMapping("/{idInscricao}")
+    public ResponseEntity<?> atualizarInscricao(@PathVariable Long idInscricao, @RequestBody StatusInscricaoDto request) {
+        inscricaoService.atualizarInscricao(idInscricao, request);
+        return ResponseEntity.ok().build();
+    }
 }
