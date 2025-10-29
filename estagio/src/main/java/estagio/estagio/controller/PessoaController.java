@@ -1,6 +1,7 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.PessoaService;
+import estagio.estagio.dto.ParticipanteTabelaDto;
 import estagio.estagio.entity.Pessoa;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
@@ -41,8 +43,15 @@ public class PessoaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Pessoa>> listarPessoas() {
-        return ResponseEntity.ok(pessoaService.buscarPessoas());
+    public ResponseEntity<List<ParticipanteTabelaDto>> listarPessoas() {
+        List<ParticipanteTabelaDto> pessoas =  pessoaService.listarPessoas();
+        return ResponseEntity.ok(pessoas);
+    }
+
+    @GetMapping("historico/{idPessoa}")
+    public ResponseEntity<?> buscarHistoricoPessoa(@PathVariable Long idPessoa) {
+        Map<String, Object> historico = pessoaService.buscarHistoricoPessoa(idPessoa);
+        return ResponseEntity.ok(historico);
     }
 
     @PutMapping("/{id}")

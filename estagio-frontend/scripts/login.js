@@ -15,19 +15,8 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
             body: JSON.stringify({ cpf, senha })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Erro ao fazer login");
-            }
-            return response.json();
+            window.location.href = redirect;    
         })
-        .then(data => {
-            localStorage.setItem("usuario", JSON.stringify(data));
-            window.location.href = redirect;
-        })
-        .catch(error => {
-            console.error("Erro:", error);
-            document.getElementById("loginError").classList.remove("d-none");
-        });
     });
 
 const cpfInput = document.getElementById('cpf');

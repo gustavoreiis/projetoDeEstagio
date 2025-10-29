@@ -44,4 +44,20 @@ public class PresencaService {
         }
         atividadeService.alterarStatusAtividade(atividade.getId(), false);
     }
+
+    public int calcularFrequencia(Long idPessoa) {
+        List<Presenca> presencas = presencaRepository.findByPessoaId(idPessoa);
+
+        int total = 0, presente = 0;
+
+        for (Presenca presenca : presencas) {
+            total++;
+            if (presenca.isPresente()) presente++;
+        }
+
+        if (total == 0) return -1;
+
+        double frequencia = ((double) presente / total) * 100;
+        return (int) Math.round(frequencia);
+    }
 }

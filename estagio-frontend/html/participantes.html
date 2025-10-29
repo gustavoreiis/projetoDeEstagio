@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/participantes.css">
+
+    <title>Musa</title>
+</head>
+
+<body>
+    <nav class="navbar vermelho">
+        <div class="container-fluid">
+            <button class="btn vermelho-hover border" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#sidebar">
+                <i class="bi bi-list text-white bg-transparent"></i>
+            </button>
+            <a class="navbar-brand" href="encontros.html">
+                <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="40">
+            </a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start vermelho" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header position-relative justify-content-center">
+            <img class="rounded-circle" src="../images/logo.jpg" alt="Logo Musa" height="80">
+            <button type="button"
+                class="btn position-absolute top-50 end-0 translate-middle-y me-3 border vermelho-hover"
+                data-bs-dismiss="offcanvas" aria-label="Fechar">
+                <i class="bi bi-x-lg text-white fs-4 bg-transparent"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body d-flex justify-content-center">
+            <ul class="nav flex-column fs-5">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="#">Participantes</a></li>
+                <hr class="text-white">
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Presença</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <button onclick="voltarPagina()" class="btn d-flex align-items-center me-2 p-0 border-0">
+                    <i class="bi bi-arrow-left fs-3"></i>
+                </button>
+                <div>
+                    <h1 class="fs-2 m-0">Gerenciar Pessoas</h1>
+                    <p class="m-0">Visualização e controle de membros</p>
+                </div>
+            </div>
+            <button class="btn vermelho text-white d-flex align-items-center" data-bs-toggle="modal"
+                data-bs-target="#modalSolicitacoes">Aprovações</button>
+        </div>
+    </div>
+
+    <div class="container my-3">
+        <form id="formFiltros">
+            <div class="row g-2">
+                <div class="col-12 col-md-10">
+                    <input type="text" class="form-control" id="pesquisarNome" placeholder="Pesquisar por nome"
+                        autocomplete="off">
+                </div>
+
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-light text-dark w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                        <i id="iconeCollapse" class="bi bi-caret-down-fill"></i> Filtros
+                    </button>
+                </div>
+            </div>
+
+            <div class="collapse mt-3" id="filtrosCollapse">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="pesquisarCpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="pesquisarCpf" placeholder="Pesquisar por CPF"
+                            maxlength="14" autocomplete="off">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filtroGrupo" class="form-label">Grupo</label>
+                        <select class="form-select" id="filtroGrupo">
+                            <option value="">Todos</option>
+                            <option value="Participante">Participante</option>
+                            <option value="Servo">Servo</option>
+                            <option value="Artes">Artes</option>
+                            <option value="Comunicação Social">Comunicação Social</option>
+                            <option value="Intercessão">Intercessão</option>
+                            <option value="Música">Música</option>
+                            <option value="Pregação">Pregação</option>
+                            <option value="Promoção Humana">Promoção Humana</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container mt-4 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header vermelho text-white">
+                <h5 class="m-0">Lista de Pessoas</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Nome</th>
+                            <th class="text-center">CPF</th>
+                            <th class="text-center">Telefone</th>
+                            <th class="text-center">Grupo</th>
+                            <th class="text-center">Data de Nascimento</th>
+                            <th class="text-center">Frequência</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaPessoas">
+
+                    </tbody>
+                </table>
+                <div id="paginacao" class="d-flex justify-content-center align-items-center mt-3"></div>
+                <div id="lista-vazio" class="text-center py-5 d-none">
+                    <i class="bi bi-person-lines-fill fs-3"></i>
+                    <p class="text-secondary m-0">Nenhuma pessoa encontrada</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header vermelho text-white">
+                    <h5 class="modal-title" id="modalDetalhesLabel">Detalhes da Pessoa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6"><strong>Nome:</strong>
+                            <p id="detalheNome">Maria Silva</p>
+                        </div>
+                        <div class="col-md-6"><strong>CPF:</strong>
+                            <p id="detalheCpf">123.456.789-00</p>
+                        </div>
+                        <div class="col-md-6"><strong>Telefone:</strong>
+                            <p id="detalheTelefone">(11) 99999-9999</p>
+                        </div>
+                        <div class="col-md-6"><strong>E-mail:</strong>
+                            <p id="detalheEmail">maria@gmail.com</p>
+                        </div>
+                        <div class="col-md-6"><strong>Data de Nascimento:</strong>
+                            <p id="detalheNascimento">20/05/1995</p>
+                        </div>
+                        <div class="col-md-6"><strong>Sexo:</strong>
+                            <p id="detalheSexo">Feminino</p>
+                        </div>
+                        <div class="col-md-12"><strong>Endereço:</strong>
+                            <p id="detalheEndereco">Rua das Flores, 123</p>
+                        </div>
+                        <div class="col-md-6"><strong>Responsável:</strong>
+                            <p id="detalheResponsavel">João Pereira</p>
+                        </div>
+                        <div class="col-md-6"><strong>Coordenador:</strong>
+                            <p id="detalheCoordenador">Sim</p>
+                        </div>
+                        <div class="col-md-6"><strong>Ministério:</strong>
+                            <p id="detalheMinisterio">Música</p>
+                        </div>
+                        <div class="col-md-6"><strong>Autorização:</strong>
+                            <p id="detalheAutorizacao">Sim</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button class="btn vermelho text-white">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalHistorico" tabindex="-1" aria-labelledby="modalHistoricoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header vermelho text-white">
+                    <h5 class="modal-title" id="modalHistoricoLabel">Atividades e Encontros de Maria Silva</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="tabsParticipante" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="atividades-tab" data-bs-toggle="tab"
+                                data-bs-target="#atividades" type="button" role="tab">Atividades</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="encontros-tab" data-bs-toggle="tab" data-bs-target="#encontros"
+                                type="button" role="tab">Encontros</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="atividades" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Data</th>
+                                            <th>Presente</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historicoAtividades">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="encontros" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historicoEncontros">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Solicitações -->
+    <div class="modal fade" id="modalSolicitacoes" tabindex="-1" aria-labelledby="modalSolicitacoesLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xxl modal-dialog-scrollable">
+            <div class="modal-content shadow-sm border-0">
+                <!-- Cabeçalho -->
+                <div class="modal-header text-white" style="background-color: #B53534;">
+                    <h5 class="modal-title" id="modalSolicitacoesLabel">Solicitações de Acesso - Coordenador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+
+                <!-- Corpo -->
+                <div class="modal-body">
+                    <!-- Abas -->
+                    <ul class="nav nav-tabs" id="tabsSolicitacoes" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pendentes-tab" data-bs-toggle="tab"
+                                data-bs-target="#pendentes" type="button" role="tab">
+                                Pendentes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="aprovados-tab" data-bs-toggle="tab" data-bs-target="#aprovados"
+                                type="button" role="tab">
+                                Aprovados
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="negados-tab" data-bs-toggle="tab" data-bs-target="#negados"
+                                type="button" role="tab">
+                                Negados
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Conteúdo das abas -->
+                    <div class="tab-content mt-3">
+                        <!-- Aba Pendentes -->
+                        <div class="tab-pane fade show active" id="pendentes" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nome</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaPendentes">
+                                        <tr>
+                                            <td class="text-center">João da Silva</td>
+                                            <td class="text-center">
+                                                <select class="form-select form-select-sm status-select">
+                                                    <option value="PENDENTE" selected>Pendente</option>
+                                                    <option value="APROVADO">Aprovado</option>
+                                                    <option value="REPROVADO">Reprovado</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-center">Maria Oliveira</td>
+                                            <td class="text-center">
+                                                <select class="form-select form-select-sm status-select">
+                                                    <option value="PENDENTE" selected>Pendente</option>
+                                                    <option value="APROVADO">Aprovado</option>
+                                                    <option value="REPROVADO">Reprovado</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Aba Aprovados -->
+                        <div class="tab-pane fade" id="aprovados" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nome</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaAprovados">
+                                        <tr>
+                                            <td class="text-center">Carlos Pereira</td>
+                                            <td class="text-center">
+                                                <select class="form-select form-select-sm status-select">
+                                                    <option value="APROVADO" selected>Aprovado</option>
+                                                    <option value="PENDENTE">Pendente</option>
+                                                    <option value="REPROVADO">Reprovado</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Aba Negados -->
+                        <div class="tab-pane fade" id="negados" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nome</th>
+                                            <th class="text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaNegados">
+                                        <tr>
+                                            <td class="text-center">Ana Beatriz</td>
+                                            <td class="text-center">
+                                                <select class="form-select form-select-sm status-select">
+                                                    <option value="REPROVADO" selected>Reprovado</option>
+                                                    <option value="PENDENTE">Pendente</option>
+                                                    <option value="APROVADO">Aprovado</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rodapé -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn" style="background-color: #B53534; color:white;"
+                        id="salvarSolicitacoes">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/participantes.js"></script>
+</body>
+
+</html>

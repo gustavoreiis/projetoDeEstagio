@@ -1,21 +1,37 @@
 package estagio.estagio.Service;
 
-import estagio.estagio.entity.Pessoa;
+import estagio.estagio.dto.EncontroDto;
+import estagio.estagio.dto.HistoricoAtividadeDto;
+import estagio.estagio.dto.HistoricoEncontroDto;
+import estagio.estagio.dto.ParticipanteTabelaDto;
+import estagio.estagio.entity.*;
+import estagio.estagio.repository.EncontroRepository;
+import estagio.estagio.repository.InscricaoRepository;
 import estagio.estagio.repository.PessoaRepository;
+import estagio.estagio.repository.PresencaRepository;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PessoaService {
 
-    private final PessoaRepository pessoaRepository;
-
-    public PessoaService(PessoaRepository pessoaRepository) {
-        this.pessoaRepository = pessoaRepository;
-    }
+    @Autowired
+    private PessoaRepository pessoaRepository;
+    @Autowired
+    private PresencaService presencaService;
+    @Autowired
+    private EncontroRepository encontroRepository;
+    @Autowired
+    private InscricaoRepository inscricaoRepository;
+    @Autowired
+    private PresencaRepository presencaRepository;
 
     public Pessoa criarPessoa(Pessoa pessoa) {
         if (pessoaRepository.existsByCpf(pessoa.getCpf())) {
@@ -36,10 +52,6 @@ public class PessoaService {
 
     public Optional<Pessoa> buscarPessoaPorCpf(String cpf) {
         return pessoaRepository.findPessoaByCpf(cpf);
-    }
-
-    public List<Pessoa> buscarPessoas() {
-        return pessoaRepository.findAll();
     }
 
     public Pessoa atualizarPessoa(Long id, Pessoa pessoa) {
@@ -86,5 +98,62 @@ public class PessoaService {
 
     public List<Pessoa> buscarLideres(Long idEncontro, Pessoa.TipoPessoa tipo) {
         return pessoaRepository.findLideresDisponiveis(idEncontro, tipo);
+    }
+
+    public List<ParticipanteTabelaDto> listarPessoas() {
+        List<Pessoa> pessoas = pessoaRepository.findAll();
+
+        return pessoas.stream().map(pessoa -> {
+
+            int frequencia = presencaService.calcularFrequencia(pessoa.getId());
+
+            String grupo;
+            if (pessoa.getTipo() == Pessoa.TipoPessoa.SERVO) {
+                if (pessoa.getMinisterio() != null) grupo = pessoa.getMinisterio().getNomeFormatado();
+                else grupo = "Servo";
+            } else {
+                grupo = "Participante";
+            }
+
+            return new ParticipanteTabelaDto(
+                    pessoa.getId(),
+                    pessoa.getNome(),
+                    pessoa.getCpf(),
+                    pessoa.getTelefone(),
+                    grupo,
+                    pessoa.getNascimento(),
+                    frequencia
+            );
+        }).toList();
+    }
+
+    public Map<String, Object> buscarHistoricoPessoa(Long idPessoa) {
+
+        List<Presenca> presencas = presencaRepository.findByPessoaId(idPessoa);
+        List<HistoricoAtividadeDto> atividades = presencas.stream()
+                .map(presenca -> {
+                    Atividade atividade = presenca.getAtividade();
+                    return new HistoricoAtividadeDto(
+                            atividade.getDescricao(),
+                            atividade.getDataAtividade(),
+                            presenca.isPresente()
+                    );
+                }).collect(Collectors.toList());
+
+        List<Inscricao> incricoes = inscricaoRepository.findByPessoaId(idPessoa);
+        List<HistoricoEncontroDto> encontros = incricoes.stream()
+                .map(inscricao -> {
+                    Encontro encontro = inscricao.getEncontro();
+                    return new HistoricoEncontroDto(
+                            encontro.getTitulo(),
+                            encontro.getDataHoraInicio()
+                    );
+                }).collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("atividades", atividades);
+        response.put("encontros", encontros);
+
+        return response;
     }
 }

@@ -2,7 +2,9 @@ package estagio.estagio.controller;
 
 import estagio.estagio.Service.AuthService;
 import estagio.estagio.Service.PessoaService;
+import estagio.estagio.Service.TokenService;
 import estagio.estagio.dto.LoginRequest;
+import estagio.estagio.dto.LoginResponseDto;
 import estagio.estagio.dto.SenhaDto;
 import estagio.estagio.entity.Pessoa;
 import estagio.estagio.repository.InscricaoRepository;
@@ -29,13 +31,17 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private PessoaRepository pessoaRepository;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.getCpf(), request.getSenha());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((Pessoa) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDto(token));
         //return authService.login(request);
     }
 
