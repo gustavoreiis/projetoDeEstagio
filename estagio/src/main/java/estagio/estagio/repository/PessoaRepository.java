@@ -18,6 +18,7 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     Optional<Pessoa> findPessoaByCpf(String cpf);
     List<Pessoa> findByTipo(Pessoa.TipoPessoa tipo);
     List<Pessoa> findByMinisterio(Pessoa.Ministerio ministerio);
+    List<Pessoa> findByCoordenadorIsNull();
 
 
     boolean existsByCpf(@Pattern(regexp = "\\d{11}", message = "O CPF deve conter exatamente 11 dígitos numéricos") String cpf);

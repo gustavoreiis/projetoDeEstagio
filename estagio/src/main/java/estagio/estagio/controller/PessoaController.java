@@ -54,6 +54,12 @@ public class PessoaController {
         return ResponseEntity.ok(historico);
     }
 
+    @GetMapping("/coordenadores")
+    public ResponseEntity<?> buscarSolicitacoesCoordenadores() {
+        Map<String, Object> solicitacoes = pessoaService.buscarSolicitacoesCoordenadores();
+        return ResponseEntity.ok(solicitacoes);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizarPessoa(@PathVariable Long id, @RequestBody Pessoa pessoa) {
         Pessoa atualizada = pessoaService.atualizarPessoa(id, pessoa);

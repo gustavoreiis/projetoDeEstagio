@@ -1,9 +1,6 @@
 package estagio.estagio.Service;
 
-import estagio.estagio.dto.EncontroDto;
-import estagio.estagio.dto.HistoricoAtividadeDto;
-import estagio.estagio.dto.HistoricoEncontroDto;
-import estagio.estagio.dto.ParticipanteTabelaDto;
+import estagio.estagio.dto.*;
 import estagio.estagio.entity.*;
 import estagio.estagio.repository.EncontroRepository;
 import estagio.estagio.repository.InscricaoRepository;
@@ -13,10 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -153,6 +147,28 @@ public class PessoaService {
         Map<String, Object> response = new HashMap<>();
         response.put("atividades", atividades);
         response.put("encontros", encontros);
+
+        return response;
+    }
+
+    public Map<String, Object> buscarSolicitacoesCoordenadores() {
+        List<Pessoa> pessoas = pessoaRepository.findByCoordenadorIsNull();
+        List<SolicitacaoCoordenadorDto> pendentes = new ArrayList<>();
+        List<SolicitacaoCoordenadorDto> aprovados = new ArrayList<>();
+        List<SolicitacaoCoordenadorDto> negados = new ArrayList<>();
+
+        for (Pessoa pessoa : pessoas) {
+            switch (pessoa.getCoordenador()) {
+                case PENDENTE -> pendentes.add(new SolicitacaoCoordenadorDto(pessoa.getId(), pessoa.getNome(), pessoa.getCoordenador()));
+                case COORDENADOR -> aprovados.add(new SolicitacaoCoordenadorDto(pessoa.getId(), pessoa.getNome(), pessoa.getCoordenador()));
+                case NEGADO -> negados.add(new SolicitacaoCoordenadorDto(pessoa.getId(), pessoa.getNome(), pessoa.getCoordenador()));
+            }
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("pendentes", pendentes);
+        response.put("aprovados", aprovados);
+        response.put("negados", negados);
 
         return response;
     }
