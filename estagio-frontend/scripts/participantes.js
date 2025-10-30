@@ -204,7 +204,7 @@ async function carregarHistoricoParticipante(participante) {
     }
 }
 
-document.getElementById('btnCarregarAprovacoes').addEventListener('click', async function () {
+async function carregarSolicitacoesAprovacao() {
     try {
         const response = await fetch("http://localhost:8080/pessoas/solicitacoes");
         const solicitacoes = await response.json();
@@ -215,6 +215,10 @@ document.getElementById('btnCarregarAprovacoes').addEventListener('click', async
     }
     catch (error) {
     }
+}
+
+document.getElementById('opcaoAprovacoes').addEventListener('click', async function () {
+
 });
 
 function preencherTabela(idTabela, lista, statusPadrao) {
@@ -288,23 +292,22 @@ async function abrirModalParticipante(participanteTabela) {
     document.getElementById('idPessoa').value = participanteTabela?.idPessoa || "";
 
     if (participanteTabela) {
-        console.log("Carregando participante para edição:", participanteTabela);
         document.getElementById('nome').value = participanteTabela.nome || "";
         document.getElementById('cpf').value = formatarCpf(participanteTabela.cpf || "");
         document.getElementById('telefone').value = formatarTelefone(participanteTabela.telefone || "");
         document.getElementById('dataNascimento').value = participanteTabela.dataNascimento || "";
 
-
-
         document.getElementById('divInativar').classList.remove('d-none');
+        document.getElementById('coordenadorSelect').classList.remove('d-none');
+        document.getElementById('modalParticipanteLabel').textContent = 'Editar Participante - ' + participanteTabela.nome;
+    } else {
+        document.getElementById('coordenadorSelect').classList.add('d-none');
     }
 
-    // Campos que precisam de backend
     if (participanteTabela?.idPessoa) {
         try {
             const response = await fetch(`http://localhost:8080/pessoas/detalhes/${participanteTabela.idPessoa}`);
             const detalhes = await response.json();
-            console.log("Detalhes recebidos:", detalhes);
 
             document.getElementById('email').value = detalhes.email || "";
             document.getElementById('endereco').value = detalhes.endereco || "";
@@ -329,6 +332,18 @@ async function abrirModalParticipante(participanteTabela) {
     modal.show();
 }
 
+document.getElementById('tipo').addEventListener('change', function () {
+    const divMinisterio = document.getElementById('divMinisterio');
+    const tipoSelecionado = this.value;
+
+    if (tipoSelecionado === 'SERVO') {
+        divMinisterio.classList.remove('d-none');
+    } else {
+        divMinisterio.classList.add('d-none');
+        document.getElementById('ministerio').value = "";
+    }
+});
+
 
 document.getElementById('btnSalvarParticipante').addEventListener('click', () => salvarOuAtualizarParticipante(true));
 document.getElementById('btnInativar').addEventListener('click', () => salvarOuAtualizarParticipante(false));
@@ -336,6 +351,14 @@ document.getElementById('btnInativar').addEventListener('click', () => salvarOuA
 async function salvarOuAtualizarParticipante(ativo) {
     const idPessoa = document.getElementById('idPessoa').value;
     const ministerioValue = document.getElementById('ministerio').value;
+
+    const nomeResp = document.getElementById('nomeResponsavel').value.trim();
+    const cpfResp = document.getElementById('cpfResponsavel').value.trim();
+    const telResp = document.getElementById('telefoneResponsavel').value.trim();
+
+    const responsavel = (nomeResp || cpfResp || telResp)
+        ? { nome: nomeResp, cpf: cpfResp, telefone: telResp }
+        : null;
 
     const payload = {
         nome: document.getElementById('nome').value,
@@ -349,13 +372,8 @@ async function salvarOuAtualizarParticipante(ativo) {
         sexo: document.getElementById('sexo').value,
         observacao: document.getElementById('observacao').value,
         ativo: ativo,
-        responsavel: {
-            nome: document.getElementById('nomeResponsavel').value,
-            cpf: document.getElementById('cpfResponsavel').value,
-            telefone: document.getElementById('telefoneResponsavel').value
-        }
+        responsavel: responsavel
     };
-
     try {
         const url = idPessoa ? `http://localhost:8080/pessoas/${idPessoa}` : `http://localhost:8080/pessoas`;
         const method = idPessoa ? "PUT" : "POST";
@@ -370,12 +388,53 @@ async function salvarOuAtualizarParticipante(ativo) {
             modal.hide();
             location.reload();
         } else {
-            alert("Erro ao salvar participante.");
+            console.log('Erro ao salvar participante.');
         }
     } catch (error) {
         console.error(error);
-        alert("Erro ao salvar participante.");
     }
+}
+
+async function carregarParticipantesInativos() {
+    const modalElement = new bootstrap.Modal(document.getElementById('modalInativos'));
+    const tabela = document.getElementById('tabelaInativos');
+
+    try {
+        const response = await fetch('http://localhost:8080/pessoas/inativos');
+        const inativos = await response.json();
+
+        if (!inativos  || inativos.length === 0) {
+            tabela.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                        Nenhum participante inativo encontrado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tabela.innerHTML = "";
+
+        inativos.forEach(inativo => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="text-center">${inativo.nome}</td>
+                <td class="text-center">
+                    <button class="btn btn-success btn-sm" id="${inativo.idPessoa}" onclick="reativarPessoa(${inativo.idPessoa})">
+                        <i class="bi bi-person-check"></i> Reativar
+                    </button>
+                </td>
+            `;
+            tabela.appendChild(tr);
+        })
+    } catch (error) {
+        console.log('Erro ao buscar inativos. ', error);
+    }
+}
+
+async function reativarPessoa(idPessoa) {
+    console.log("Reativando: " + idPessoa);
 }
 
 
@@ -406,10 +465,18 @@ document.getElementById('telefone').addEventListener('input', function (e) {
     e.target.value = valor;
 });
 
-
 document.getElementById('pesquisarCpf').addEventListener('input', function (e) {
     e.target.value = formatarCpf(e.target.value);
 });
+
+document.getElementById('cpf').addEventListener('input', function (e) {
+    e.target.value = formatarCpf(e.target.value);
+});
+
+document.getElementById('cpfResponsavel').addEventListener('input', function (e) {
+    e.target.value = formatarCpf(e.target.value);
+});
+
 
 function formatarTelefone(telefone) {
     if (!telefone) return "-";

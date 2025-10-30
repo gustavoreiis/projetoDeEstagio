@@ -83,5 +83,11 @@ input:-webkit-autofill {
   background-color: #B53534;
 }
 
+.btn.vermelho:active,
+.btn.vermelho.show {
+  background-color: #a22f2f !important;
+  color: #fff !important;
+}
+
 
 
