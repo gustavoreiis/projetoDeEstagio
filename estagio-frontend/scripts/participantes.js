@@ -49,7 +49,7 @@ function preencherTabelaParticipantes(participantes) {
             <td class="text-center">${formatarData(participante.dataNascimento)}</td>
             <td class="text-center">${frequenciaExibicao}</td>
             <td class="text-center">
-                <button class="btn vermelho-border" data-bs-toggle="modal" data-bs-target="#modalDetalhes">
+                <button class="btn vermelho-border" data-bs-toggle="modal" data-bs-target="#modalParticipante">
                     <i class="bi bi-eye"></i>
                 </button>
                 <button class="btn vermelho-border" data-bs-toggle="modal" data-bs-target="#modalHistorico">
@@ -58,8 +58,8 @@ function preencherTabelaParticipantes(participantes) {
             </td>
         `;
 
-        const btnDetalhes = tr.querySelector('button[data-bs-target="#modalDetalhes"]');
-        btnDetalhes.addEventListener("click", () => carregarDetalhesParticipante(participante));
+        const btnDetalhes = tr.querySelector('button[data-bs-target="#modalParticipante"]');
+        btnDetalhes.addEventListener("click", () => abrirModalParticipante(participante));
 
         const btnAtividades = tr.querySelector('button[data-bs-target="#modalHistorico"]');
         btnAtividades.addEventListener("click", () => carregarHistoricoParticipante(participante));
@@ -204,6 +204,179 @@ async function carregarHistoricoParticipante(participante) {
     }
 }
 
+document.getElementById('btnCarregarAprovacoes').addEventListener('click', async function () {
+    try {
+        const response = await fetch("http://localhost:8080/pessoas/solicitacoes");
+        const solicitacoes = await response.json();
+
+        preencherTabela("tabelaPendentes", solicitacoes.pendentes, "PENDENTE");
+        preencherTabela("tabelaAprovados", solicitacoes.aprovados, "COORDENADOR");
+        preencherTabela("tabelaNegados", solicitacoes.negados, "NEGADO");
+    }
+    catch (error) {
+    }
+});
+
+function preencherTabela(idTabela, lista, statusPadrao) {
+    const tabela = document.getElementById(idTabela);
+    tabela.innerHTML = "";
+
+    if (!lista || lista.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td colspan="2" class="text-center text-muted py-3">
+                Nenhum elemento encontrado.
+            </td>
+        `;
+        tabela.appendChild(tr);
+        return;
+    }
+
+    lista.forEach(pessoa => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td class="text-center">${pessoa.nome}</td>
+            <td class="text-center">
+                <select class="form-select form-select-sm status-select" data-id="${pessoa.idPessoa}">
+                    <option value="PENDENTE" ${pessoa.statusCoordenador === "PENDENTE" ? "selected" : ""}>Pendente</option>
+                    <option value="COORDENADOR" ${pessoa.statusCoordenador === "COORDENADOR" ? "selected" : ""}>Aprovado</option>
+                    <option value="NEGADO" ${pessoa.statusCoordenador === "NEGADO" ? "selected" : ""}>Negado</option>
+                </select>
+            </td>
+        `;
+        tabela.appendChild(tr);
+    });
+}
+
+document.getElementById('salvarSolicitacoes').addEventListener('click', async function () {
+    const selects = document.querySelectorAll('.status-select');
+    const alteracoes = [];
+
+    selects.forEach(select => {
+        alteracoes.push({
+            idPessoa: select.getAttribute("data-id"),
+            novoStatus: select.value
+        });
+    });
+
+    try {
+        const response = await fetch("http://localhost:8080/pessoas/solicitacoes", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(alteracoes)
+        });
+
+        if (response.ok) {
+            const modalElement = document.getElementById('modalSolicitacoes');
+            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modal.hide();
+        } else {
+            console.log("Erro ao salvar alterações:");
+        }
+    } catch (error) {
+        console.error("Erro ao enviar alterações:", error);
+    }
+});
+
+const modalEl = document.getElementById('modalParticipante');
+const modal = new bootstrap.Modal(modalEl);
+async function abrirModalParticipante(participanteTabela) {
+    document.getElementById('formParticipante').reset();
+    document.getElementById('divMinisterio').classList.add('d-none');
+    document.getElementById('dadosResponsavel').classList.add('d-none');
+    document.getElementById('divInativar').classList.add('d-none');
+    document.getElementById('idPessoa').value = participanteTabela?.idPessoa || "";
+
+    if (participanteTabela) {
+        console.log("Carregando participante para edição:", participanteTabela);
+        document.getElementById('nome').value = participanteTabela.nome || "";
+        document.getElementById('cpf').value = formatarCpf(participanteTabela.cpf || "");
+        document.getElementById('telefone').value = formatarTelefone(participanteTabela.telefone || "");
+        document.getElementById('dataNascimento').value = participanteTabela.dataNascimento || "";
+
+
+
+        document.getElementById('divInativar').classList.remove('d-none');
+    }
+
+    // Campos que precisam de backend
+    if (participanteTabela?.idPessoa) {
+        try {
+            const response = await fetch(`http://localhost:8080/pessoas/detalhes/${participanteTabela.idPessoa}`);
+            const detalhes = await response.json();
+            console.log("Detalhes recebidos:", detalhes);
+
+            document.getElementById('email').value = detalhes.email || "";
+            document.getElementById('endereco').value = detalhes.endereco || "";
+            document.getElementById('tipo').value = detalhes.tipo || "PARTICIPANTE";
+
+            if (detalhes.tipo == "SERVO") {
+                document.getElementById('divMinisterio').classList.remove('d-none');
+                document.getElementById('ministerio').value = detalhes.ministerio || "";
+            }
+
+            if (detalhes.nomeResponsavel) {
+                document.getElementById('dadosResponsavel').classList.remove('d-none');
+                document.getElementById('nomeResponsavel').value = detalhes.nomeResponsavel || "";
+                document.getElementById('cpfResponsavel').value = formatarCpf(detalhes.cpfResponsavel) || "";
+                document.getElementById('telefoneResponsavel').value = formatarTelefone(detalhes.telefoneResponsavel) || "";
+            }
+            document.getElementById('observacao').value = detalhes.observacao || "";
+        } catch (error) {
+            console.error("Erro ao buscar detalhes do participante:", error);
+        }
+    }
+    modal.show();
+}
+
+
+document.getElementById('btnSalvarParticipante').addEventListener('click', () => salvarOuAtualizarParticipante(true));
+document.getElementById('btnInativar').addEventListener('click', () => salvarOuAtualizarParticipante(false));
+
+async function salvarOuAtualizarParticipante(ativo) {
+    const idPessoa = document.getElementById('idPessoa').value;
+    const ministerioValue = document.getElementById('ministerio').value;
+
+    const payload = {
+        nome: document.getElementById('nome').value,
+        cpf: limparFormatacao(document.getElementById('cpf').value),
+        telefone: limparFormatacao(document.getElementById('telefone').value),
+        email: document.getElementById('email').value,
+        dataNascimento: document.getElementById('dataNascimento').value,
+        endereco: document.getElementById('endereco').value,
+        tipo: document.getElementById('tipo').value,
+        ministerio: ministerioValue === "" ? null : ministerioValue,
+        sexo: document.getElementById('sexo').value,
+        observacao: document.getElementById('observacao').value,
+        ativo: ativo,
+        responsavel: {
+            nome: document.getElementById('nomeResponsavel').value,
+            cpf: document.getElementById('cpfResponsavel').value,
+            telefone: document.getElementById('telefoneResponsavel').value
+        }
+    };
+
+    try {
+        const url = idPessoa ? `http://localhost:8080/pessoas/${idPessoa}` : `http://localhost:8080/pessoas`;
+        const method = idPessoa ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            modal.hide();
+            location.reload();
+        } else {
+            alert("Erro ao salvar participante.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao salvar participante.");
+    }
+}
 
 
 
@@ -216,9 +389,22 @@ async function carregarHistoricoParticipante(participante) {
 
 
 
+document.getElementById('telefone').addEventListener('input', function (e) {
+    let valor = e.target.value.replace(/\D/g, '');
+    valor = valor.substring(0, 11);
 
+    if (valor.length > 2 && valor.length <= 10) {
+        if (valor.length > 6) {
+            valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '$1 $2-$3');
+        } else {
+            valor = valor.replace(/^(\d{2})(\d{0,4})$/, '$1 $2');
+        }
+    } else if (valor.length === 11) {
+        valor = valor.replace(/^(\d{2})(\d{5})(\d{0,4})$/, '$1 $2-$3');
+    }
 
-
+    e.target.value = valor;
+});
 
 
 document.getElementById('pesquisarCpf').addEventListener('input', function (e) {
@@ -241,15 +427,19 @@ function formatarData(data) {
 }
 
 function formatarCpf(valor) {
-  valor = valor.replace(/\D/g, '');
-  valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-  valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-  valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  return valor;
+    valor = valor.replace(/\D/g, '');
+    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+    valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    return valor;
 }
 
 function formatarDataEncontro(dataHora) {
     if (!dataHora) return "-";
     const data = new Date(dataHora);
     return data.toLocaleDateString("pt-BR");
+}
+
+function limparFormatacao(valor) {
+    return valor.replace(/\D/g, '');
 }

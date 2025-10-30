@@ -1,7 +1,9 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.PessoaService;
+import estagio.estagio.dto.DetalhesPessoaDto;
 import estagio.estagio.dto.ParticipanteTabelaDto;
+import estagio.estagio.dto.SolicitacaoAtualizacaoCoordenadorDto;
 import estagio.estagio.entity.Pessoa;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +30,17 @@ public class PessoaController {
         return ResponseEntity.created(URI.create(novaPessoa.getId().toString())).body(novaPessoa);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Pessoa> buscarPessoaPorId(@PathVariable Long id) {
-        return pessoaService.buscarPessoaPorId(id)
+    @GetMapping("/{idPessoa}")
+    public ResponseEntity<Pessoa> buscarPessoaPorId(@PathVariable Long idPessoa) {
+        return pessoaService.buscarPessoaPorId(idPessoa)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/detalhes/{idPessoa}")
+    public ResponseEntity<DetalhesPessoaDto> buscarDetalhesPessoa(@PathVariable Long idPessoa) {
+        DetalhesPessoaDto detalhes = pessoaService.buscarDetalhesPessoa(idPessoa);
+        return ResponseEntity.ok(detalhes);
     }
 
     @GetMapping("/cpf/{cpf}")
@@ -54,20 +62,26 @@ public class PessoaController {
         return ResponseEntity.ok(historico);
     }
 
-    @GetMapping("/coordenadores")
+    @GetMapping("/solicitacoes")
     public ResponseEntity<?> buscarSolicitacoesCoordenadores() {
         Map<String, Object> solicitacoes = pessoaService.buscarSolicitacoesCoordenadores();
         return ResponseEntity.ok(solicitacoes);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long id, @RequestBody Pessoa pessoa) {
-        Pessoa atualizada = pessoaService.atualizarPessoa(id, pessoa);
+    @PutMapping("/{idPessoa}")
+    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long idPessoa, @RequestBody Pessoa pessoa) {
+        Pessoa atualizada = pessoaService.atualizarPessoa(idPessoa, pessoa);
         if (atualizada != null) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/solicitacoes")
+    public ResponseEntity<Void> alterarStatusCoordenador(@RequestBody List<SolicitacaoAtualizacaoCoordenadorDto> solicitacoes) {
+        pessoaService.alterarStatusCoordenador(solicitacoes);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

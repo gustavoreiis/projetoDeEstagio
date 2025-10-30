@@ -58,7 +58,7 @@
                 </div>
             </div>
             <button class="btn vermelho text-white d-flex align-items-center" data-bs-toggle="modal"
-                data-bs-target="#modalSolicitacoes">Aprovações</button>
+                id="btnCarregarAprovacoes" data-bs-target="#modalSolicitacoes">Aprovações</button>
         </div>
     </div>
 
@@ -135,55 +135,140 @@
         </div>
     </div>
 
-    <!-- Modal Detalhes -->
-    <div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal fade" id="modalParticipante" tabindex="-1" aria-labelledby="modalParticipanteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header vermelho text-white">
-                    <h5 class="modal-title" id="modalDetalhesLabel">Detalhes da Pessoa</h5>
+                    <h5 class="modal-title" id="modalParticipanteLabel">Cadastrar Participante</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Fechar"></button>
                 </div>
+
                 <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6"><strong>Nome:</strong>
-                            <p id="detalheNome">Maria Silva</p>
+                    <form id="formParticipante">
+                        <input type="hidden" id="idPessoa">
+                        <div class="row g-3">
+
+                            <!-- Nome -->
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" id="nome" class="form-control" required>
+                            </div>
+
+                            <!-- CPF -->
+                            <div class="col-md-6">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <input type="text" id="cpf" class="form-control" maxlength="14" required>
+                            </div>
+
+                            <!-- Data de Nascimento -->
+                            <div class="col-md-4">
+                                <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                                <input type="date" id="dataNascimento" class="form-control" required>
+                            </div>
+
+                            <!-- Telefone -->
+                            <div class="col-md-4">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="text" id="telefone" class="form-control" maxlength="15">
+                            </div>
+
+                            <!-- E-mail -->
+                            <div class="col-md-4">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" id="email" class="form-control">
+                            </div>
+
+                            <!-- Endereço -->
+                            <div class="col-md-12">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <input type="text" id="endereco" class="form-control">
+                            </div>
+
+                            <!-- Tipo -->
+                            <div class="col-md-4">
+                                <label for="tipo" class="form-label">Tipo</label>
+                                <select id="tipo" class="form-select">
+                                    <option value="PARTICIPANTE" selected>Participante</option>
+                                    <option value="SERVO">Servo</option>
+                                </select>
+                            </div>
+
+                            <!-- Sexo -->
+                            <div class="col-md-4">
+                                <label for="sexo" class="form-label">Sexo</label>
+                                <select id="sexo" class="form-select">
+                                    <option value="MASCULINO">Masculino</option>
+                                    <option value="FEMININO">Feminino</option>
+                                </select>
+                            </div>
+
+                            <!-- Coordenador -->
+                            <div class="col-md-4">
+                                <label for="coordenador" class="form-label">Coordenador</label>
+                                <select id="coordenador" class="form-select" disabled>
+                                    <option value="false" selected>Não</option>
+                                    <option value="true">Sim</option>
+                                </select>
+                            </div>
+
+                            <!-- Ministério (apenas se tipo = Servo) -->
+                            <div id="divMinisterio" class="col-md-6 d-none">
+                                <label for="ministerio" class="form-label">Ministério</label>
+                                <select id="ministerio" class="form-select">
+                                    <option value="">Selecione...</option>
+                                    <option value="Artes">Artes</option>
+                                    <option value="Comunicação Social">Comunicação Social</option>
+                                    <option value="Intercessão">Intercessão</option>
+                                    <option value="Música">Música</option>
+                                    <option value="Pregação">Pregação</option>
+                                    <option value="Promoção Humana">Promoção Humana</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6"><strong>CPF:</strong>
-                            <p id="detalheCpf">123.456.789-00</p>
+
+                        <!-- Dados do Responsável -->
+                        <div id="dadosResponsavel" class="mt-4 p-3 border rounded d-none">
+                            <h6 class="fw-bold mb-3">Dados do Responsável</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nomeResponsavel" class="form-label">Nome</label>
+                                    <input type="text" id="nomeResponsavel" class="form-control">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="cpfResponsavel" class="form-label">CPF</label>
+                                    <input type="text" id="cpfResponsavel" class="form-control" maxlength="14">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="telefoneResponsavel" class="form-label">Telefone</label>
+                                    <input type="text" id="telefoneResponsavel" class="form-control" maxlength="15">
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6"><strong>Telefone:</strong>
-                            <p id="detalheTelefone">(11) 99999-9999</p>
+
+                        <!-- Observação -->
+                        <div class="mt-4">
+                            <label for="observacao" class="form-label">Observação</label>
+                            <textarea id="observacao" class="form-control" rows="2"></textarea>
                         </div>
-                        <div class="col-md-6"><strong>E-mail:</strong>
-                            <p id="detalheEmail">maria@gmail.com</p>
+
+                        <!-- Inativar -->
+                        <div class="mt-3 d-none" id="divInativar">
+                            <button type="button" id="btnInativar" class="btn vermelho-border branco-hover">
+                                <i class="bi bi-person-x"></i> Inativar Participante
+                            </button>
                         </div>
-                        <div class="col-md-6"><strong>Data de Nascimento:</strong>
-                            <p id="detalheNascimento">20/05/1995</p>
-                        </div>
-                        <div class="col-md-6"><strong>Sexo:</strong>
-                            <p id="detalheSexo">Feminino</p>
-                        </div>
-                        <div class="col-md-12"><strong>Endereço:</strong>
-                            <p id="detalheEndereco">Rua das Flores, 123</p>
-                        </div>
-                        <div class="col-md-6"><strong>Responsável:</strong>
-                            <p id="detalheResponsavel">João Pereira</p>
-                        </div>
-                        <div class="col-md-6"><strong>Coordenador:</strong>
-                            <p id="detalheCoordenador">Sim</p>
-                        </div>
-                        <div class="col-md-6"><strong>Ministério:</strong>
-                            <p id="detalheMinisterio">Música</p>
-                        </div>
-                        <div class="col-md-6"><strong>Autorização:</strong>
-                            <p id="detalheAutorizacao">Sim</p>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button class="btn vermelho text-white">Salvar Alterações</button>
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button id="btnSalvarParticipante" type="submit" class="btn vermelho text-white">Salvar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -252,21 +337,17 @@
         </div>
     </div>
 
-    <!-- Modal Solicitações -->
     <div class="modal fade" id="modalSolicitacoes" tabindex="-1" aria-labelledby="modalSolicitacoesLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xxl modal-dialog-scrollable">
             <div class="modal-content shadow-sm border-0">
-                <!-- Cabeçalho -->
                 <div class="modal-header text-white" style="background-color: #B53534;">
                     <h5 class="modal-title" id="modalSolicitacoesLabel">Solicitações de Acesso - Coordenador</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Fechar"></button>
                 </div>
 
-                <!-- Corpo -->
                 <div class="modal-body">
-                    <!-- Abas -->
                     <ul class="nav nav-tabs" id="tabsSolicitacoes" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="pendentes-tab" data-bs-toggle="tab"
@@ -288,9 +369,7 @@
                         </li>
                     </ul>
 
-                    <!-- Conteúdo das abas -->
                     <div class="tab-content mt-3">
-                        <!-- Aba Pendentes -->
                         <div class="tab-pane fade show active" id="pendentes" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
@@ -301,32 +380,12 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tabelaPendentes">
-                                        <tr>
-                                            <td class="text-center">João da Silva</td>
-                                            <td class="text-center">
-                                                <select class="form-select form-select-sm status-select">
-                                                    <option value="PENDENTE" selected>Pendente</option>
-                                                    <option value="APROVADO">Aprovado</option>
-                                                    <option value="REPROVADO">Reprovado</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-center">Maria Oliveira</td>
-                                            <td class="text-center">
-                                                <select class="form-select form-select-sm status-select">
-                                                    <option value="PENDENTE" selected>Pendente</option>
-                                                    <option value="APROVADO">Aprovado</option>
-                                                    <option value="REPROVADO">Reprovado</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Aba Aprovados -->
                         <div class="tab-pane fade" id="aprovados" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
@@ -337,22 +396,12 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tabelaAprovados">
-                                        <tr>
-                                            <td class="text-center">Carlos Pereira</td>
-                                            <td class="text-center">
-                                                <select class="form-select form-select-sm status-select">
-                                                    <option value="APROVADO" selected>Aprovado</option>
-                                                    <option value="PENDENTE">Pendente</option>
-                                                    <option value="REPROVADO">Reprovado</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Aba Negados -->
                         <div class="tab-pane fade" id="negados" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
@@ -363,16 +412,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tabelaNegados">
-                                        <tr>
-                                            <td class="text-center">Ana Beatriz</td>
-                                            <td class="text-center">
-                                                <select class="form-select form-select-sm status-select">
-                                                    <option value="REPROVADO" selected>Reprovado</option>
-                                                    <option value="PENDENTE">Pendente</option>
-                                                    <option value="APROVADO">Aprovado</option>
-                                                </select>
-                                            </td>
-                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -383,8 +423,8 @@
                 <!-- Rodapé -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn" style="background-color: #B53534; color:white;"
-                        id="salvarSolicitacoes">Salvar Alterações</button>
+                    <button type="button" class="btn vermelho vermelho-hover text-white" id="salvarSolicitacoes">Salvar
+                        Alterações</button>
                 </div>
             </div>
         </div>

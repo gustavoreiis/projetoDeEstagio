@@ -76,6 +76,7 @@ public class PessoaService {
         if (pessoa.getSexo() != null) atual.setSexo(pessoa.getSexo());
         if (pessoa.getMinisterio() != null) atual.setMinisterio(pessoa.getMinisterio());
         if (pessoa.getObservacao() != null) atual.setObservacao(pessoa.getObservacao());
+        atual.setAtivo(pessoa.isAtivo());
         if (pessoa.getCoordenador() != null) atual.setCoordenador(pessoa.getCoordenador());
 
         return pessoaRepository.save(atual);
@@ -95,7 +96,7 @@ public class PessoaService {
     }
 
     public List<ParticipanteTabelaDto> listarPessoas() {
-        List<Pessoa> pessoas = pessoaRepository.findAll();
+        List<Pessoa> pessoas = pessoaRepository.findByAtivo(true);
 
         return pessoas.stream().map(pessoa -> {
 
@@ -152,7 +153,7 @@ public class PessoaService {
     }
 
     public Map<String, Object> buscarSolicitacoesCoordenadores() {
-        List<Pessoa> pessoas = pessoaRepository.findByCoordenadorIsNull();
+        List<Pessoa> pessoas = pessoaRepository.findByCoordenadorIsNotNull();
         List<SolicitacaoCoordenadorDto> pendentes = new ArrayList<>();
         List<SolicitacaoCoordenadorDto> aprovados = new ArrayList<>();
         List<SolicitacaoCoordenadorDto> negados = new ArrayList<>();
@@ -171,5 +172,49 @@ public class PessoaService {
         response.put("negados", negados);
 
         return response;
+    }
+
+    public void alterarStatusCoordenador(List<SolicitacaoAtualizacaoCoordenadorDto> solicitacoes) {
+        for (SolicitacaoAtualizacaoCoordenadorDto solicitacao : solicitacoes) {
+            Pessoa pessoa = pessoaRepository.findById(solicitacao.getIdPessoa())
+                    .orElseThrow(() -> new RuntimeException("Pessoa não encontrada."));
+
+            try {
+                Pessoa.StatusCoordenador novoStatus = Pessoa.StatusCoordenador.valueOf(String.valueOf(solicitacao.getNovoStatus()));
+                pessoa.setCoordenador(novoStatus);
+                pessoaRepository.save(pessoa);
+            } catch (Exception e) {
+                throw new RuntimeException("Erro ao atualizar status coordenador.", e);
+            }
+        }
+    }
+
+    public DetalhesPessoaDto buscarDetalhesPessoa(Long idPessoa) {
+        Pessoa pessoa = pessoaRepository.findById(idPessoa)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada."));
+
+        Responsavel responsavel = pessoa.getResponsavel();
+
+        String nomeResponsavel = responsavel != null ? responsavel.getNome() : null;
+        String telefoneResponsavel = responsavel != null ? responsavel.getTelefone() : null;
+        String cpfResponsavel = responsavel != null ? responsavel.getCpf() : null;
+
+        String ministerioFormatado = pessoa.getMinisterio() != null
+                ? pessoa.getMinisterio().getNomeFormatado()
+                : null;
+
+        return new DetalhesPessoaDto(
+                pessoa.getId(),
+                pessoa.getEmail(),
+                pessoa.getEndereco(),
+                pessoa.getTipo(),
+                ministerioFormatado,
+                pessoa.getSexo(),
+                pessoa.getCoordenador(),
+                nomeResponsavel,
+                telefoneResponsavel,
+                cpfResponsavel,
+                pessoa.getObservacao()
+        );
     }
 }

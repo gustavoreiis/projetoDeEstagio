@@ -6,8 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class SolicitacaoCoordenadorDto {
+public class SolicitacaoAtualizacaoCoordenadorDto {
     private Long idPessoa;
-    private String nome;
-    private Pessoa.StatusCoordenador statusCoordenador;
+    private Pessoa.StatusCoordenador novoStatus;
 }
