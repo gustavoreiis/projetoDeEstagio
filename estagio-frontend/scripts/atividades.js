@@ -1,3 +1,6 @@
+verificarAutenticacao();
+
+
 function abrirModalCriar() {
     document.getElementById('modalGrupoLabel').textContent = "Cadastrar Nova Atividade";
     document.getElementById('btnSalvarAtividade').textContent = "Cadastrar";

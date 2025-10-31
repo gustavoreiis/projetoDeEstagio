@@ -1,21 +1,3 @@
-const usuario = JSON.parse(localStorage.getItem('usuario'));
-function logar() {
-  const paginaAtual = encodeURIComponent(window.location.href);
-  window.location.href = `/html/login.html?redirect=${paginaAtual}`;
-}
-
-function sair() {
-  localStorage.removeItem('usuario');
-  window.location.reload();
-}
-
-if (usuario) {
-  document.getElementById('usuarioNome').innerHTML = usuario.nome;
-  document.getElementById('usuarioNome').classList.remove('d-none');
-  document.getElementById('btn-sair').classList.remove('d-none');
-  document.querySelector('.btn-light').classList.add('d-none');
-}
-
 const modal = new bootstrap.Modal(document.getElementById('modalIdentificacao'));
 window.addEventListener('load', () => {
   modal.show();
@@ -33,6 +15,12 @@ document.getElementById('modalForm').addEventListener('submit', function (e) {
 const erroDiv = document.getElementById('erro');
 
 const encontroId = new URLSearchParams(window.location.search).get('encontro');
+document.addEventListener('DOMContentLoaded', () => {
+  if (!encontroId) {
+    window.location.href = "encontros.html";
+    return;
+  }
+})
 
 async function verificarCpf(cpf, nascimento) {
   try {

@@ -2,6 +2,10 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-inscricao').href = `inscricao.html?encontro=${id}`;
+  if (!id) {
+    window.location.href = "encontros.html";
+    return;
+  }
 })
 
 function abrirInscricoes() {
@@ -13,7 +17,6 @@ function abrirGrupos() {
   const id = params.get('id');
   window.location.href = `grupos.html?id=${id}`;
 }
-
 
 function formatarDataBR(date) {
   const d = new Date(date);
@@ -46,29 +49,16 @@ function editarEncontro(id) {
   window.location.href = `cadastrarEditarEncontro.html?id=${id}`;
 }
 
-function logar() {
-  const paginaAtual = encodeURIComponent(window.location.href);
-  window.location.href = `/html/login.html?redirect=${paginaAtual}`;
+const token = localStorage.getItem('token');
+
+if (token) {
+  document.getElementById('hr-acoes').classList.remove('d-none');
+  document.getElementById('acoes-encontro').classList.remove('d-none');
+} else {
+  document.getElementById('hr-acoes').classList.add('d-none');
+  document.getElementById('acoes-encontro').classList.add('d-none');
 }
 
-function sair() {
-  localStorage.removeItem('usuario');
-  window.location.reload();
-}
-
-const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-if (usuario) {
-  if (usuario.coordenador === 'COORDENADOR') {
-    document.getElementById('hr-acoes').classList.remove('d-none');
-    document.getElementById('acoes-encontro').classList.remove('d-none');
-  }
-  document.getElementById('usuarioNome').innerHTML = usuario.nome;
-  document.getElementById('usuarioNome').classList.remove('d-none');
-  document.getElementById('btn-sair').classList.remove('d-none');
-  document.querySelector('.btn-light').classList.add('d-none');
-  document.getElementById('btn-inscricao').classList.remove('d-none');
-}
 
 
 

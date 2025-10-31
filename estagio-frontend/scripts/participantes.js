@@ -1,3 +1,5 @@
+verificarAutenticacao();
+
 let pessoas = [];
 let pessoasFiltradas = [];
 let paginaAtual = 1;

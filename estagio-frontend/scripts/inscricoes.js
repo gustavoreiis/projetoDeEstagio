@@ -1,9 +1,17 @@
+verificarAutenticacao();
+
 function voltarEncontro() {
     window.location.href = `/html/visualizarEncontro.html?id=${idEncontro}`;
 }
 
 const params = new URLSearchParams(window.location.search);
 const idEncontro = parseInt(params.get("id"));
+document.addEventListener('DOMContentLoaded', () => {
+    if (!idEncontro) {
+    window.location.href = "encontros.html";
+    return;
+  }
+})
 
 if (idEncontro) {
     fetch(`http://localhost:8080/encontros/${idEncontro}`)

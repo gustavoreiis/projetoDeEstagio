@@ -1,3 +1,5 @@
+verificarAutenticacao();
+
 function previewImage(event) {
     const input = event.target;
     const preview = document.getElementById('preview');
@@ -113,23 +115,5 @@ function mostrarErroData(mensagem) {
 }
 
 document.getElementById("form-encontro").addEventListener("submit", salvarEncontro);
-
-function logar() {
-    const paginaAtual = encodeURIComponent(window.location.href);
-    window.location.href = `/html/login.html?redirect=${paginaAtual}`;
-}
-
-function sair() {
-    localStorage.removeItem('usuario');
-    window.location.href = 'encontros.html';
-}
-
-const usuario = JSON.parse(localStorage.getItem('usuario'));
-
-if (usuario) {
-  document.getElementById('usuarioNome').innerHTML = usuario.nome;
-  document.getElementById('usuarioNome').classList.remove('d-none');
-  document.getElementById('btn-sair').classList.remove('d-none');
-}
 
 

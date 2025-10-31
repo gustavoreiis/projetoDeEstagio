@@ -1,33 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
   const btnCadastrar = document.getElementById("btn-cadastrar");
-  const btnSair = document.getElementById("btn-sair");
-  const btnLogin = document.querySelector(".btn-light");
-  const usuarioNome = document.getElementById("usuarioNome");
 
-  if (!token) {
-    btnLogin.classList.remove("d-none");
-    btnSair.classList.add("d-none");
-    usuarioNome.textContent = "Coordenador";
-  } else {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const nome = payload.nome;
-    usuarioNome.textContent = nome;
-
-    btnLogin.classList.add("d-none");
-    btnSair.classList.remove("d-none");
+  if (token) {
     btnCadastrar.classList.remove("d-none");
   }
-
-  window.sair = function () {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
-
-  window.logar = function () {
-    const paginaAtual = encodeURIComponent(window.location.href);
-    window.location.href = `/html/login.html?redirect=${paginaAtual}`;
-  };
 
   try {
     const response = await fetch("http://localhost:8080/encontros", {
