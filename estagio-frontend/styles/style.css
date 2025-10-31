@@ -89,5 +89,10 @@ input:-webkit-autofill {
   color: #fff !important;
 }
 
+.dropdown-item:active {
+  background-color: #e0e0e0;
+  color: black;
+}
+
 
 

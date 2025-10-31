@@ -395,15 +395,14 @@ async function salvarOuAtualizarParticipante(ativo) {
     }
 }
 
-async function carregarParticipantesInativos() {
-    const modalElement = new bootstrap.Modal(document.getElementById('modalInativos'));
+async function carregarParticipantesInativos() {    
     const tabela = document.getElementById('tabelaInativos');
 
     try {
         const response = await fetch('http://localhost:8080/pessoas/inativos');
         const inativos = await response.json();
 
-        if (!inativos  || inativos.length === 0) {
+        if (!inativos || inativos.length === 0) {
             tabela.innerHTML = `
                 <tr>
                     <td colspan="4" class="text-center text-muted py-4">
@@ -421,7 +420,7 @@ async function carregarParticipantesInativos() {
             tr.innerHTML = `
                 <td class="text-center">${inativo.nome}</td>
                 <td class="text-center">
-                    <button class="btn btn-success btn-sm" id="${inativo.idPessoa}" onclick="reativarPessoa(${inativo.idPessoa})">
+                    <button class="btn btn-sm vermelho-border branco-hover" id="${inativo.idPessoa}" onclick="reativarPessoa(${inativo.idPessoa})">
                         <i class="bi bi-person-check"></i> Reativar
                     </button>
                 </td>
@@ -434,7 +433,20 @@ async function carregarParticipantesInativos() {
 }
 
 async function reativarPessoa(idPessoa) {
-    console.log("Reativando: " + idPessoa);
+    const pessoa = {
+        ativo: true
+    };
+
+    try {
+        const response = await fetch(`http://localhost:8080/pessoas/${idPessoa}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pessoa)
+        });
+    } catch (error) {
+        console.error('Erro ao reativar participante. ', error);
+    }
+    carregarParticipantesInativos();
 }
 
 
@@ -476,7 +488,6 @@ document.getElementById('cpf').addEventListener('input', function (e) {
 document.getElementById('cpfResponsavel').addEventListener('input', function (e) {
     e.target.value = formatarCpf(e.target.value);
 });
-
 
 function formatarTelefone(telefone) {
     if (!telefone) return "-";

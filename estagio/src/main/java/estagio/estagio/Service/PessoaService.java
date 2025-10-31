@@ -217,4 +217,17 @@ public class PessoaService {
                 pessoa.getObservacao()
         );
     }
+
+    public List<PessoaStatusDto> buscarInativos() {
+        List<Pessoa> pessoas = pessoaRepository.findByAtivo(false);
+        List<PessoaStatusDto> inativos = new ArrayList<>();
+        for (Pessoa pessoa : pessoas) {
+            inativos.add(new PessoaStatusDto(
+                    pessoa.getId(),
+                    pessoa.getNome()
+            ));
+        }
+
+        return inativos;
+    }
 }

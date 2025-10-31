@@ -1,6 +1,24 @@
-.usuario-logado.coordenador .card-encontro:hover .btn-cancelar {
-  display: inline-flex !important;
-  background-color: #ffffff;
+.card-encontro {
+  position: relative;
+}
+
+.btn-cancelar {
+  background-color: white;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10; /* garante que fique acima da imagem e link */
+}
+
+.btn-cancelar:active {
+  background-color: #f8d7da !important;
+}
+
+.card-encontro:hover .btn-cancelar {
+  opacity: 1;
+  cursor: pointer;
 }
 
 .card-img-top {

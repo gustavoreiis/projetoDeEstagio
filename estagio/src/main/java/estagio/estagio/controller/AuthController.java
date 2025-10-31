@@ -11,6 +11,7 @@ import estagio.estagio.repository.InscricaoRepository;
 import estagio.estagio.repository.PessoaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,30 +37,33 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(request.getCpf(), request.getSenha());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(request.getCpf(), request.getSenha());
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            var pessoa = (Pessoa) auth.getPrincipal();
 
-        var token = tokenService.generateToken((Pessoa) auth.getPrincipal());
+            if (pessoa.getCoordenador() != Pessoa.StatusCoordenador.COORDENADOR) {
+                return ResponseEntity
+                        .status(HttpStatus.FORBIDDEN)
+                        .body("Acesso negado. Verifique seu acesso com um coordenador.");
+            }
+            var token = tokenService.generateToken(pessoa);
 
-        return ResponseEntity.ok(new LoginResponseDto(token));
-        //return authService.login(request);
+            return ResponseEntity.ok(new LoginResponseDto(token));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("CPF ou senha incorretos.");
+        }
     }
 
     @PostMapping("/cadastro")
     public ResponseEntity cadastrarUsuario(@RequestBody @Valid Pessoa pessoa) {
         if (pessoaRepository.findByCpf(pessoa.getCpf()) != null) return ResponseEntity.badRequest().build();
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(pessoa.getSenha());
-
-        pessoa.setSenha(encryptedPassword);
-        pessoa.setTipo(Pessoa.TipoPessoa.SERVO);
-        pessoa.setCoordenador(Pessoa.StatusCoordenador.PENDENTE);
-        pessoaRepository.save(pessoa);
+        authService.cadastrarUsuario(pessoa);
 
         return ResponseEntity.ok().build();
-
-//        Pessoa novaPessoa = authService.cadastrarUsuario(pessoa);
-//        return ResponseEntity.ok(novaPessoa);
     }
 
     @GetMapping("/verificar-cpf")

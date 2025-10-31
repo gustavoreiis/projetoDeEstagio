@@ -23,6 +23,7 @@ public class TokenService {
             String token = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(pessoa.getCpf())
+                    .withClaim("nome", pessoa.getNome())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
             return token;
