@@ -284,8 +284,6 @@ document.getElementById('salvarSolicitacoes').addEventListener('click', async fu
     }
 });
 
-const modalEl = document.getElementById('modalParticipante');
-const modal = new bootstrap.Modal(modalEl);
 async function abrirModalParticipante(participanteTabela) {
     document.getElementById('formParticipante').reset();
     document.getElementById('divMinisterio').classList.add('d-none');
@@ -331,21 +329,19 @@ async function abrirModalParticipante(participanteTabela) {
             console.error("Erro ao buscar detalhes do participante:", error);
         }
     }
-    modal.show();
+
+    document.getElementById('tipo').addEventListener('change', function () {
+        const divMinisterio = document.getElementById('divMinisterio');
+        const tipoSelecionado = this.value;
+
+        if (tipoSelecionado === 'SERVO') {
+            divMinisterio.classList.remove('d-none');
+        } else {
+            divMinisterio.classList.add('d-none');
+            document.getElementById('ministerio').value = "";
+        }
+    });
 }
-
-document.getElementById('tipo').addEventListener('change', function () {
-    const divMinisterio = document.getElementById('divMinisterio');
-    const tipoSelecionado = this.value;
-
-    if (tipoSelecionado === 'SERVO') {
-        divMinisterio.classList.remove('d-none');
-    } else {
-        divMinisterio.classList.add('d-none');
-        document.getElementById('ministerio').value = "";
-    }
-});
-
 
 document.getElementById('btnSalvarParticipante').addEventListener('click', () => salvarOuAtualizarParticipante(true));
 document.getElementById('btnInativar').addEventListener('click', () => salvarOuAtualizarParticipante(false));
@@ -367,7 +363,7 @@ async function salvarOuAtualizarParticipante(ativo) {
         cpf: limparFormatacao(document.getElementById('cpf').value),
         telefone: limparFormatacao(document.getElementById('telefone').value),
         email: document.getElementById('email').value,
-        dataNascimento: document.getElementById('dataNascimento').value,
+        nascimento: document.getElementById('dataNascimento').value,
         endereco: document.getElementById('endereco').value,
         tipo: document.getElementById('tipo').value,
         ministerio: ministerioValue === "" ? null : ministerioValue,
@@ -387,7 +383,6 @@ async function salvarOuAtualizarParticipante(ativo) {
         });
 
         if (response.ok) {
-            modal.hide();
             location.reload();
         } else {
             console.log('Erro ao salvar participante.');
@@ -397,7 +392,7 @@ async function salvarOuAtualizarParticipante(ativo) {
     }
 }
 
-async function carregarParticipantesInativos() {    
+async function carregarParticipantesInativos() {
     const tabela = document.getElementById('tabelaInativos');
 
     try {

@@ -22,7 +22,6 @@ function getUsuarioLogado() {
 }
 
 function verificarAutenticacao() {
-  console.log('teste');
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -59,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const nome = payload.nome;
-    console.log(nome);
     usuarioNome.textContent = nome;
     btnSair.classList.remove("d-none");
     btnLogin.classList.add("d-none");

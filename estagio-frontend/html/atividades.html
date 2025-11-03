@@ -35,11 +35,14 @@
         </div>
         <div class="offcanvas-body d-flex justify-content-center">
             <ul class="nav flex-column fs-5">
-                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a>
+                </li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="participantes.html">Participantes</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center"
+                        href="participantes.html">Participantes</a></li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Presença</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a>
+                </li>
             </ul>
         </div>
         <div
@@ -74,15 +77,15 @@
                     <div class="modal-body">
                         <input type="hidden" id="idAtividade">
                         <div class="mb-3">
-                            <label for="descricao" class="form-label">Descrição</label>
+                            <label for="descricao" class="form-label required">Descrição</label>
                             <input type="text" class="form-control" id="descricao" required>
                         </div>
                         <div class="mb-3">
-                            <label for="data" class="form-label">Data</label>
+                            <label for="data" class="form-label required">Data</label>
                             <input type="date" class="form-control" id="data" required>
                         </div>
                         <div class="mb-3">
-                            <label for="grupo" class="form-label">Grupo</label>
+                            <label for="grupo" class="form-label required">Grupo</label>
                             <select class="form-select" id="grupo" required>
                                 <option value="" disabled selected>Selecione um grupo</option>
                                 <option value="Participantes">Participantes</option>
@@ -115,7 +118,8 @@
                     <h5 class="modal-title" id="modalExcluirLabel">Excluir Atividade</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body">Deseja excluir essa atividade? Todos os registros presentes serão removidos.</div>
+                <div class="modal-body">Deseja excluir essa atividade? Todos os registros presentes serão removidos.
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-danger" id="confirmarExcluir">Excluir</button>
@@ -132,14 +136,19 @@
                         <h5 class="modal-title mb-3" id="modalPresencaLabel"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
-                    
+
                     <div class="d-flex">
                         <h6 id="atividadeData" class="mx-2"></h6>
                         <h6 id="atividadeGrupo" class="m-0"></h6>
                     </div>
-                    
+
                 </div>
                 <div class="modal-body">
+                    <div id="lista-vazia" class="text-center py-5 d-none">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <p class="text-secondary">Nenhum participante encontrado para este grupo</p>
+                    </div>
+
                     <input type="hidden" id="idAtividadePresenca">
                     <form id="formPresenca">
                         <div id="listaPessoas"></div>
@@ -147,10 +156,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn vermelho vermelho-hover text-white" id="btnSalvarPresenca">Salvar</button>
+                    <button type="button" class="btn vermelho vermelho-hover text-white"
+                        id="btnSalvarPresenca">Salvar</button>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 
     <div class="container my-3">

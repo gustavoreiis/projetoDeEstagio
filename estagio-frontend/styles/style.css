@@ -94,5 +94,11 @@ input:-webkit-autofill {
   color: black;
 }
 
+.required::after {
+    content: " *";
+    color: #dc3545;
+    font-weight: bold;
+}
+
 
 

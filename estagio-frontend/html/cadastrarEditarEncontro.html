@@ -61,39 +61,39 @@
                 <div class="row p-3">
                     <div class="col-12 col-md-8">
                         <div class="mb-3">
-                            <label for="titulo" class="form-label">Nome do Encontro</label>
+                            <label for="titulo" class="form-label required">Nome do Encontro</label>
                             <input type="text" class="form-control" id="titulo" name="titulo" required>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <label for="dataHoraInicio" class="form-label">Data Início</label>
+                                <label for="dataHoraInicio" class="form-label required">Data Início</label>
                                 <input type="datetime-local" class="form-control" id="dataHoraInicio"
                                     name="dataHoraInicio" required>
                             </div>
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <label for="dataHoraFim" class="form-label">Data Encerramento</label>
+                                <label for="dataHoraFim" class="form-label required">Data Encerramento</label>
                                 <input type="datetime-local" class="form-control" id="dataHoraFim" name="dataHoraFim"
                                     required>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="local" class="form-label">Local</label>
+                            <label for="local" class="form-label required">Local</label>
                             <input type="text" class="form-control" id="local" name="local" required>
                         </div>
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
-                                <label for="preco" class="form-label">Preço</label>
-                                <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="0"
+                                <label for="preco" class="form-label required">Preço</label>
+                                <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="1"
                                     required>
                             </div>
                             <div class="col-12 col-md-6 mb-3">
-                                <label for="capa" class="form-label">Capa</label>
+                                <label for="capa" class="form-label required">Capa</label>
                                 <input class="form-control vermelho-border" type="file" id="capa" name="capa" required accept="image/*"
                                     onchange="previewImage(event)">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="descricao" class="form-label">Descrição</label>
+                            <label for="descricao" class="form-label required">Descrição</label>
                             <textarea class="form-control" id="descricao" name="descricao" rows="4"
                                 maxlength="1000"></textarea>
                         </div>

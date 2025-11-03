@@ -1,4 +1,5 @@
 verificarAutenticacao();
+
 const params = new URLSearchParams(window.location.search);
 const idEncontro = parseInt(params.get('id'));
 document.addEventListener('DOMContentLoaded', () => {

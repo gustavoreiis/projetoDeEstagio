@@ -1,6 +1,5 @@
 verificarAutenticacao();
 
-
 function abrirModalCriar() {
     document.getElementById('modalGrupoLabel').textContent = "Cadastrar Nova Atividade";
     document.getElementById('btnSalvarAtividade').textContent = "Cadastrar";
@@ -189,9 +188,13 @@ async function abrirModalPresenca(idAtividade) {
 
     const response = await fetch(`http://localhost:8080/atividades/${idAtividade}`);
     const pessoas = await response.json();
+
+    if (!pessoas || pessoas.length === 0) {
+        document.getElementById('lista-vazia').classList.remove('d-none');
+        document.getElementById('btnSalvarPresenca').disabled = true;
+    }
     
     pessoas.forEach(pessoa => {
-        console.log(pessoa);
         const item = document.createElement('div');
         item.classList.add('border', 'rounded', 'py-2', 'px-4',  'row', 'align-items-center', 'mb-2');
 

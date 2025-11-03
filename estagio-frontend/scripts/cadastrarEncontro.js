@@ -32,6 +32,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('dataHoraInicio').setAttribute('min', agoraLocal);
     document.getElementById('dataHoraFim').setAttribute('min', agoraLocal);
+
+    this.document.getElementById('dataHoraInicio').addEventListener('change', function() {
+        const dataHoraInicio = new Date(this.value);
+        const dataHoraFimInput = document.getElementById('dataHoraFim');
+        dataHoraFimInput.setAttribute('min', this.value);
+    });
 });
 
 function carregarEncontroParaEdicao(idEncontro) {
