@@ -123,8 +123,4 @@ public class GrupoService {
             return grupoDto;
         }).toList();
     }
-
-    public Grupo buscarGrupoPorId(Long idGrupo) {
-        return grupoRepository.findById(idGrupo).orElse(null);
-    }
 }

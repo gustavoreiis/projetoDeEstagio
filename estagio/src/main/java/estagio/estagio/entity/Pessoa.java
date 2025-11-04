@@ -3,6 +3,7 @@ package estagio.estagio.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,6 +28,7 @@ public class Pessoa implements UserDetails {
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "O campo nome é obrigatório.")
     private String nome;
 
     @Column(nullable = false, unique = true)

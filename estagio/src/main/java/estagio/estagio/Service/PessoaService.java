@@ -21,8 +21,6 @@ public class PessoaService {
     @Autowired
     private PresencaService presencaService;
     @Autowired
-    private EncontroRepository encontroRepository;
-    @Autowired
     private InscricaoRepository inscricaoRepository;
     @Autowired
     private PresencaRepository presencaRepository;

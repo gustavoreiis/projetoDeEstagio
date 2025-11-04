@@ -70,7 +70,7 @@ public class PessoaController {
     }
 
     @PutMapping("/{idPessoa}")
-    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long idPessoa, @RequestBody Pessoa pessoa) {
+    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long idPessoa, @Valid @RequestBody Pessoa pessoa) {
         Pessoa atualizada = pessoaService.atualizarPessoa(idPessoa, pessoa);
         if (atualizada != null) {
             return ResponseEntity.noContent().build();

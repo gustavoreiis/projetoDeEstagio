@@ -25,7 +25,9 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     boolean existsByCpf(@Pattern(regexp = "\\d{11}", message = "O CPF deve conter exatamente 11 dígitos numéricos") String cpf);
 
     @Query("SELECT p FROM Pessoa p " +
-            "WHERE p.tipo = :tipo AND p.id NOT IN (" +
+            "WHERE p.tipo = :tipo " +
+            "AND p.ativo = true " +
+            "AND p.id NOT IN (" +
             "SELECT pg.pessoa.id FROM PessoaGrupo pg " +
             "WHERE pg.grupo.encontro.id = :idEncontro AND pg.lider = true" +
             ")")
