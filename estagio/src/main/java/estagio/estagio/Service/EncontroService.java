@@ -59,7 +59,7 @@ public class EncontroService {
     }
 
     public java.util.List<Encontro> buscarEncontros() {
-        return encontroRepository.findAll();
+        return encontroRepository.findByAbertoTrue();
     }
 
     public Encontro atualizarEncontro(Long idEncontro,

@@ -343,8 +343,12 @@ async function abrirModalParticipante(participanteTabela) {
     });
 }
 
-document.getElementById('btnSalvarParticipante').addEventListener('click', () => salvarOuAtualizarParticipante(true));
-document.getElementById('btnInativar').addEventListener('click', () => salvarOuAtualizarParticipante(false));
+const form = document.getElementById('formParticipante');
+
+form.addEventListener('submit', (e) => {
+    const acao = e.submitter.dataset.acao;
+    salvarOuAtualizarParticipante(acao === "salvar");
+});
 
 async function salvarOuAtualizarParticipante(ativo) {
     const idPessoa = document.getElementById('idPessoa').value;

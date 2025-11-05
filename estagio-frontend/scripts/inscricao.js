@@ -1,6 +1,5 @@
 const modal = new bootstrap.Modal(document.getElementById('modalIdentificacao'));
 window.addEventListener('load', () => {
-  modal.show();
 });
 
 document.getElementById('modalForm').addEventListener('submit', function (e) {
@@ -15,10 +14,23 @@ document.getElementById('modalForm').addEventListener('submit', function (e) {
 const erroDiv = document.getElementById('erro');
 
 const encontroId = new URLSearchParams(window.location.search).get('encontro');
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   if (!encontroId) {
     window.location.href = "encontros.html";
     return;
+  } else {
+    const response = await fetch(`http://localhost:8080/encontros/${encontroId}`);
+    const encontro = await response.json();
+    const agora = new Date();
+    const dataHoraFimEncontro = new Date(encontro.dataHoraFim);
+    if (agora > dataHoraFimEncontro) {
+      mostrarErroModal("As inscrições para este encontro estão encerradas. Redirecionando...");
+      setTimeout(() => {
+        window.location.href = "encontros.html";
+      }, 3000);
+    } else {
+      modal.show();
+    }
   }
 })
 
@@ -75,6 +87,7 @@ document.getElementById('tipo').addEventListener('change', function () {
     document.getElementById('ministerio').required = true;
   } else {
     document.getElementById('campos-servo').classList.add('d-none');
+    document.getElementById('ministerio').required = false;
   }
 });
 
@@ -117,7 +130,6 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
     tipo: document.getElementById('tipo').value,
     ministerio: document.getElementById('tipo').value === 'SERVO' ? document.getElementById('ministerio').value : null
   };
-  console.log(pessoa.nascimento);
 
   const encontroId = new URLSearchParams(window.location.search).get('encontro');
 

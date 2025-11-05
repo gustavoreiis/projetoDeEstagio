@@ -1,10 +1,19 @@
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-inscricao').href = `inscricao.html?encontro=${id}`;
   if (!id) {
     window.location.href = "encontros.html";
     return;
+  } else {
+    const response = await fetch(`http://localhost:8080/encontros/${id}`);
+    const encontro = await response.json();
+    const agora = new Date();
+    const dataHoraFimEncontro = new Date(encontro.dataHoraFim);
+    if (agora > dataHoraFimEncontro) {
+      document.getElementById('div-inscricao').classList.add('d-none');
+      document.getElementById('div-inscricoes-encerradas').classList.remove('d-none');
+    }
   }
 })
 

@@ -42,7 +42,7 @@ public class InscricaoController {
         } catch (Exception ex) {
             return ResponseEntity
                     .badRequest()
-                    .body("Erro ao processar a inscrição: " + ex.getMessage());
+                    .body(ex.getMessage());
         }
     }
 

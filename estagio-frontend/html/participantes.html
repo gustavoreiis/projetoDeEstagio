@@ -39,7 +39,8 @@
             <ul class="nav flex-column fs-5">
                 <li class="nav-item"><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="participantes.html">Participantes</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center"
+                        href="participantes.html">Participantes</a></li>
                 <hr class="text-white">
                 <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a>
                 </li>
@@ -176,8 +177,9 @@
                         aria-label="Fechar"></button>
                 </div>
 
-                <div class="modal-body">
-                    <form id="formParticipante">
+                <form id="formParticipante">
+                    <div class="modal-body">
+
                         <input type="hidden" id="idPessoa">
                         <div class="row g-3">
 
@@ -275,19 +277,20 @@
                         </div>
 
                         <div class="mt-3 d-none" id="divInativar">
-                            <button type="button" id="btnInativar" class="btn vermelho-border branco-hover">
-                                <i class="bi bi-person-x"></i> Inativar Participante
-                            </button>
+                            <button id="btnInativar" type="submit" class="btn vermelho-border branco-hover"
+                                data-acao="inativar"><i class="bi bi-person-x"></i> Inativar Participante</button>
                         </div>
-                    </form>
-                </div>
 
-                <div class="modal-footer d-flex justify-content-between">
-                    <div>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button id="btnSalvarParticipante" type="submit" class="btn vermelho vermelho-hover text-white">Salvar</button>
                     </div>
-                </div>
+
+                    <div class="modal-footer d-flex justify-content-between">
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button id="btnSalvarParticipante" type="submit"
+                                class="btn vermelho vermelho-hover text-white" data-acao="salvar">Salvar</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -296,7 +299,7 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header vermelho text-white">
-                    <h5 class="modal-title" id="modalHistoricoLabel">Atividades e Encontros de Maria Silva</h5>
+                    <h5 class="modal-title" id="modalHistoricoLabel"></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Fechar"></button>
                 </div>
