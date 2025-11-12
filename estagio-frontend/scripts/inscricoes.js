@@ -246,15 +246,11 @@ function mostrarToast(titulo, mensagem) {
 }
 
 function formatarTelefone(telefone) {
+    if (!telefone) return "-";
     telefone = telefone.replace(/\D/g, '');
-
-    if (telefone.length === 11) {
-        return telefone.replace(/^(\d{2})(\d{5})(\d{4})$/, '$1 $2-$3');
-    } else if (telefone.length === 10) {
-        return telefone.replace(/^(\d{2})(\d{4})(\d{4})$/, '$1 $2-$3');
-    } else {
-        return telefone;
-    }
+    if (telefone.length === 11) return `(${telefone.slice(0, 2)}) ${telefone.slice(2, 7)}-${telefone.slice(7)}`;
+    if (telefone.length === 10) return `(${telefone.slice(0, 2)}) ${telefone.slice(2, 6)}-${telefone.slice(6)}`;
+    return telefone;
 }
 
 function formatarData(data) {

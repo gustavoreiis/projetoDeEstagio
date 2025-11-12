@@ -1,13 +1,11 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.AuthService;
-import estagio.estagio.Service.PessoaService;
 import estagio.estagio.Service.TokenService;
 import estagio.estagio.dto.LoginRequest;
 import estagio.estagio.dto.LoginResponseDto;
 import estagio.estagio.dto.SenhaDto;
 import estagio.estagio.entity.Pessoa;
-import estagio.estagio.repository.InscricaoRepository;
 import estagio.estagio.repository.PessoaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -51,6 +48,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new LoginResponseDto(token));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body("CPF ou senha incorretos.");

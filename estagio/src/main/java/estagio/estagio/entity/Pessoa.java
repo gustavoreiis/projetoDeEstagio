@@ -72,7 +72,7 @@ public class Pessoa implements UserDetails {
     private Ministerio ministerio;
 
     @Column(nullable = true)
-    private boolean ativo;
+    private Boolean ativo;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

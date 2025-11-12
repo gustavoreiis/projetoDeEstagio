@@ -22,10 +22,14 @@ import java.util.Optional;
 @Service
 public class AuthService implements UserDetailsService {
 
-    private final PessoaRepository pessoaRepository;
-    private final PessoaService pessoaService;
+    @Autowired
+    private PessoaRepository pessoaRepository;
+    @Autowired
+    private PessoaService pessoaService;
     @Autowired
     private InscricaoRepository inscricaoRepository;
+    @Autowired
+    private CpfService cpfService;
 
     public AuthService(PessoaRepository pessoaRepository, PessoaService pessoaService) {
         this.pessoaRepository = pessoaRepository;
@@ -48,7 +52,6 @@ public class AuthService implements UserDetailsService {
         }
 
         if (pessoa.getSenha() == null || !senhaConfere) {
-            System.out.println("Senha inválida para CPF: " + request.getCpf());
             return ResponseEntity.badRequest().body("Senha inválida");
         }
 
@@ -61,11 +64,11 @@ public class AuthService implements UserDetailsService {
         pessoa.setSenha(encryptedPassword);
         pessoa.setTipo(Pessoa.TipoPessoa.SERVO);
         pessoa.setCoordenador(Pessoa.StatusCoordenador.PENDENTE);
+        pessoa.setAtivo(true);
         return pessoaService.criarPessoa(pessoa);
     }
 
     public Pessoa cadastrarSenha(SenhaDto senhaDto) {
-        System.out.println(senhaDto.getCpf());
         Pessoa pessoa = pessoaRepository.findPessoaByCpf(senhaDto.getCpf())
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada para o CPF informado."));
 
@@ -78,8 +81,7 @@ public class AuthService implements UserDetailsService {
     public Map<String, Object> verificarCpf(String cpf, LocalDate nascimento, Long encontroId) {
         Map<String, Object> response = new HashMap<>();
 
-        if (cpf == null || !isCpfValido(cpf)) {
-            System.out.println(cpf);
+        if (cpf == null || !cpfService.isCpfValido(cpf)) {
             response.put("erro", "Formato de CPF inválido.");
             return response;
         }
@@ -108,40 +110,6 @@ public class AuthService implements UserDetailsService {
         }
 
         return response;
-    }
-
-    public boolean isCpfValido(String cpf) {
-        if (cpf == null) return false;
-
-        cpf = cpf.replaceAll("\\D", "");
-
-        if (cpf.length() != 11) return false;
-
-        if (cpf.matches("(\\d)\\1{10}")) return false;
-
-        try {
-            int soma = 0, resto;
-
-            for (int i = 1; i <= 9; i++) {
-                soma += Character.getNumericValue(cpf.charAt(i - 1)) * (11 - i);
-            }
-            resto = (soma * 10) % 11;
-            if (resto == 10 || resto == 11) resto = 0;
-            if (resto != Character.getNumericValue(cpf.charAt(9))) return false;
-
-
-            soma = 0;
-            for (int i = 1; i <= 10; i++) {
-                soma += Character.getNumericValue(cpf.charAt(i - 1)) * (12 - i);
-            }
-            resto = (soma * 10) % 11;
-            if (resto == 10 || resto == 11) resto = 0;
-            if (resto != Character.getNumericValue(cpf.charAt(10))) return false;
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override

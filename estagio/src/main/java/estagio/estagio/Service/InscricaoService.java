@@ -36,7 +36,7 @@ public class InscricaoService {
     @Autowired
     private JavaMailSender mailSender;
     @Autowired
-    private AuthService authService;
+    private CpfService cpfService;
     @Autowired
     private EncontroRepository encontroRepository;
     @Autowired
@@ -44,8 +44,14 @@ public class InscricaoService {
 
     public Inscricao inscreverParticipante(InscricaoRequest request) {
 
-        if (!authService.isCpfValido(request.getPessoa().getCpf())) {
-            throw new RuntimeException("Formato de CPF inválido");
+        if (!cpfService.isCpfValido(request.getPessoa().getCpf())) {
+            throw new RuntimeException("Formato de CPF inválido.");
+        }
+
+        if (request.getResponsavel() != null
+                && request.getResponsavel().getCpf() != null
+                && !cpfService.isCpfValido(request.getResponsavel().getCpf())) {
+            throw new RuntimeException("Formato de CPF do responsável inválido");
         }
 
         Encontro encontro = encontroService.buscarEncontroPorId(request.getEncontroId())
@@ -122,17 +128,13 @@ public class InscricaoService {
                     + "<p>Equipe Grupo Musa</p>"
                     + "</body></html>";
             helper.setText(corpo, true);
-            System.out.println("Preparando para enviar e-mail..." + destinatario.getEmail());
             mailSender.send(email);
-            System.out.println("Teste");
         } catch (Exception e) {
-            System.out.println("Erro");
             e.printStackTrace();
         }
     }
 
     public void reenviarInformacoesPagamento(Long idInscricao) {
-        System.out.println(idInscricao);
         Inscricao inscricao = inscricaoRepository.findById(idInscricao)
                 .orElseThrow(() -> new RuntimeException("Inscrição não encontrada."));
 

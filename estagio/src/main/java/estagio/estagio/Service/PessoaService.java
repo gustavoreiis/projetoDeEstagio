@@ -2,7 +2,6 @@ package estagio.estagio.Service;
 
 import estagio.estagio.dto.*;
 import estagio.estagio.entity.*;
-import estagio.estagio.repository.EncontroRepository;
 import estagio.estagio.repository.InscricaoRepository;
 import estagio.estagio.repository.PessoaRepository;
 import estagio.estagio.repository.PresencaRepository;
@@ -24,17 +23,11 @@ public class PessoaService {
     private InscricaoRepository inscricaoRepository;
     @Autowired
     private PresencaRepository presencaRepository;
+    @Autowired
+    private CpfService cpfService;
 
     public Pessoa criarPessoa(Pessoa pessoa) {
-        if (pessoaRepository.existsByCpf(pessoa.getCpf())) {
-            throw new RuntimeException("O CPF informado já está cadastrado.");
-        }
-
-        if (pessoa.getSenha() != null && !pessoa.getSenha().isEmpty()) {
-            String hashed = BCrypt.hashpw(pessoa.getSenha(), BCrypt.gensalt());
-            pessoa.setSenha(hashed);
-        }
-
+        validarCpf(pessoa.getCpf());
         return pessoaRepository.save(pessoa);
     }
 
@@ -53,8 +46,12 @@ public class PessoaService {
 
         var atual = pessoaExistente.get();
 
+        if (pessoa.getCpf() != null && !pessoa.getCpf().equals(atual.getCpf())) {
+            validarCpf(pessoa.getCpf());
+            atual.setCpf(pessoa.getCpf());
+        }
+
         if (pessoa.getNome() != null) atual.setNome(pessoa.getNome());
-        if (pessoa.getCpf() != null) atual.setCpf(pessoa.getCpf());
         if (pessoa.getTelefone() != null) atual.setTelefone(pessoa.getTelefone());
         if (pessoa.getEmail() != null) atual.setEmail(pessoa.getEmail());
         if (pessoa.getEndereco() != null) atual.setEndereco(pessoa.getEndereco());
@@ -74,7 +71,9 @@ public class PessoaService {
         if (pessoa.getSexo() != null) atual.setSexo(pessoa.getSexo());
         if (pessoa.getMinisterio() != null) atual.setMinisterio(pessoa.getMinisterio());
         if (pessoa.getObservacao() != null) atual.setObservacao(pessoa.getObservacao());
-        atual.setAtivo(pessoa.isAtivo());
+        if (pessoa.getAtivo() != null) {
+            atual.setAtivo(pessoa.getAtivo());
+        }
         if (pessoa.getCoordenador() != null) atual.setCoordenador(pessoa.getCoordenador());
 
         return pessoaRepository.save(atual);
@@ -227,5 +226,15 @@ public class PessoaService {
         }
 
         return inativos;
+    }
+
+    public void validarCpf(String cpf) {
+        if (!cpfService.isCpfValido(cpf)) {
+            throw new RuntimeException("Formato de CPF inválido.");
+        }
+
+        if (pessoaRepository.existsByCpf(cpf)) {
+            throw new RuntimeException("CPF já cadastrado.");
+        }
     }
 }

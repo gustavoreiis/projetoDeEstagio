@@ -12,12 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        localStorage.removeItem("token");
-        window.location.href = "/html/login.html";
-        return;
-      }
-      throw new Error("Erro ao buscar encontros");
+      console.warn("Erro ao buscar encontros");
+      return;
     }
 
     const data = await response.json();
@@ -43,33 +39,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       container.innerHTML += card;
     });
 
-    document.querySelectorAll(".btn-cancelar").forEach(botao => {
-      botao.addEventListener("click", async e => {
-        e.preventDefault();
-        const parentLink = botao.closest(".position-relative").querySelector("a");
-        const url = new URL(parentLink.href);
-        const encontroId = url.searchParams.get("id");
-        const titulo = botao.closest(".card").querySelector(".card-title").textContent;
+    if (token) {
+      document.querySelectorAll(".btn-cancelar").forEach(botao => {
+        botao.addEventListener("click", async e => {
+          e.preventDefault();
+          const parentLink = botao.closest(".position-relative").querySelector("a");
+          const url = new URL(parentLink.href);
+          const encontroId = url.searchParams.get("id");
+          const titulo = botao.closest(".card").querySelector(".card-title").textContent;
 
-        const modal = new bootstrap.Modal(document.getElementById("modalCancelar"));
-        document.getElementById("modalCancelarLabel").textContent = titulo;
-        modal.show();
+          const modal = new bootstrap.Modal(document.getElementById("modalCancelar"));
+          document.getElementById("modalCancelarLabel").textContent = titulo;
+          modal.show();
 
-        document.getElementById("confirmarCancelar").onclick = async function () {
-          const delResponse = await fetch(`http://localhost:8080/encontros/${encontroId}`, {
-            method: "DELETE",
-            headers: { "Authorization": `Bearer ${token}` }
-          });
+          document.getElementById("confirmarCancelar").onclick = async function () {
+            const delResponse = await fetch(`http://localhost:8080/encontros/${encontroId}`, {
+              method: "DELETE",
+              headers: { "Authorization": `Bearer ${token}` }
+            });
 
-          if (delResponse.ok) {
-            botao.closest(".col").remove();
-            modal.hide();
-          } else {
-            alert("Erro ao cancelar o encontro.");
-          }
-        };
+            if (delResponse.ok) {
+              botao.closest(".col").remove();
+              modal.hide();
+            } else {
+              alert("Erro ao cancelar o encontro.");
+            }
+          };
+        });
       });
-    });
+    }
+
   } catch (error) {
     console.error("Erro ao carregar encontros:", error);
   }

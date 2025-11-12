@@ -21,7 +21,7 @@ public class ArquivoService {
             Path caminhoArquivo = Paths.get(System.getProperty("user.dir"), "imagens", nomeArquivo);
             Files.deleteIfExists(caminhoArquivo);
         } catch (Exception e) {
-            System.out.println("Erro ao deletar imagem: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

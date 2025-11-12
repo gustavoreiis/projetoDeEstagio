@@ -63,7 +63,7 @@ async function verificarCpf(cpf, nascimento) {
       document.getElementById('email').value = pessoa.email;
       document.getElementById('endereco').value = pessoa.endereco;
       document.getElementById('nascimento').value = pessoa.nascimento;
-      document.getElementById('genero').value = pessoa.genero;
+      document.getElementById('genero').value = pessoa.sexo;
       document.getElementById('observacao').value = pessoa.observacao;
       document.getElementById('tipo').value = pessoa.tipo;
       document.getElementById('tipo').dispatchEvent(new Event('change'));

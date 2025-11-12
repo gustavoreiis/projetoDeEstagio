@@ -1,5 +1,6 @@
 package estagio.estagio.controller;
 
+import estagio.estagio.Service.AuthService;
 import estagio.estagio.Service.PessoaService;
 import estagio.estagio.dto.DetalhesPessoaDto;
 import estagio.estagio.dto.ParticipanteTabelaDto;
@@ -7,10 +8,12 @@ import estagio.estagio.dto.PessoaStatusDto;
 import estagio.estagio.dto.SolicitacaoAtualizacaoCoordenadorDto;
 import estagio.estagio.entity.Pessoa;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ import java.util.Map;
 @RequestMapping("/pessoas")
 public class PessoaController {
 
+    @Autowired
     private final PessoaService pessoaService;
 
     public PessoaController(PessoaService pessoaService) {
@@ -26,9 +30,13 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Pessoa> criarPessoa(@RequestBody @Valid Pessoa pessoa) {
-        var novaPessoa = pessoaService.criarPessoa(pessoa);
-        return ResponseEntity.created(URI.create(novaPessoa.getId().toString())).body(novaPessoa);
+    public ResponseEntity<?> criarPessoa(@RequestBody @Valid Pessoa pessoa) {
+        try {
+            var novaPessoa = pessoaService.criarPessoa(pessoa);
+            return ResponseEntity.created(URI.create(novaPessoa.getId().toString())).body(novaPessoa);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
     }
 
     @GetMapping("/{idPessoa}")
@@ -70,12 +78,17 @@ public class PessoaController {
     }
 
     @PutMapping("/{idPessoa}")
-    public ResponseEntity<Void> atualizarPessoa(@PathVariable Long idPessoa, @Valid @RequestBody Pessoa pessoa) {
-        Pessoa atualizada = pessoaService.atualizarPessoa(idPessoa, pessoa);
-        if (atualizada != null) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> atualizarPessoa(@PathVariable Long idPessoa, @RequestBody Pessoa pessoa) {
+        try {
+            Pessoa atualizada = pessoaService.atualizarPessoa(idPessoa, pessoa);
+
+            if (atualizada != null) {
+                return ResponseEntity.ok(atualizada);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         }
     }
 
@@ -91,11 +104,20 @@ public class PessoaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/verificar-cpf")
-    public ResponseEntity<Pessoa> verificarCpf(@RequestParam String cpf) {
-        return pessoaService.findByCpf(cpf)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/validar-cpf/{cpf}")
+    public ResponseEntity<?> validarCpf(@PathVariable String cpf) {
+        try {
+            pessoaService.validarCpf(cpf);
+            return ResponseEntity.ok(Map.of(
+                    "valido", true,
+                    "mensagem", "CPF válido"
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "valido", false,
+                    "mensagem", e.getMessage()
+            ));
+        }
     }
 
     @GetMapping("/lideres/{idEncontro}")

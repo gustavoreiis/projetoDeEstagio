@@ -40,6 +40,7 @@ public class InscricaoController {
 
             return ResponseEntity.ok(inscricao);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ResponseEntity
                     .badRequest()
                     .body(ex.getMessage());
