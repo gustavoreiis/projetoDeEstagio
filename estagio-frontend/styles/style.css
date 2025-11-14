@@ -54,7 +54,7 @@ input:-webkit-autofill {
     text-align: justify;
   }
 
-.bi-person-circle {
+.bi-person-circle, .bi-search {
   color: white;
 }
 

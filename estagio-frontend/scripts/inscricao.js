@@ -82,7 +82,7 @@ async function verificarCpf(cpf, nascimento) {
 
 
 document.getElementById('tipo').addEventListener('change', function () {
-  if (this.value === 'SERVO') {
+  if (this.value === 'Servo') {
     document.getElementById('campos-servo').classList.remove('d-none');
     document.getElementById('ministerio').required = true;
   } else {
@@ -128,7 +128,7 @@ document.getElementById('form-inscricao').addEventListener('submit', function (e
     sexo: document.getElementById('genero').value,
     observacao: document.getElementById('observacao').value,
     tipo: document.getElementById('tipo').value,
-    ministerio: document.getElementById('tipo').value === 'SERVO' ? document.getElementById('ministerio').value : null
+    ministerio: document.getElementById('tipo').value === 'Servo' ? document.getElementById('ministerio').value : null
   };
 
   const encontroId = new URLSearchParams(window.location.search).get('encontro');

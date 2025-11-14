@@ -1,6 +1,5 @@
 package estagio.estagio.controller;
 
-import estagio.estagio.Service.AuthService;
 import estagio.estagio.Service.PessoaService;
 import estagio.estagio.dto.DetalhesPessoaDto;
 import estagio.estagio.dto.ParticipanteTabelaDto;
@@ -9,11 +8,14 @@ import estagio.estagio.dto.SolicitacaoAtualizacaoCoordenadorDto;
 import estagio.estagio.entity.Pessoa;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +62,15 @@ public class PessoaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ParticipanteTabelaDto>> listarPessoas() {
-        List<ParticipanteTabelaDto> pessoas =  pessoaService.listarPessoas();
+    public ResponseEntity<Page<ParticipanteTabelaDto>> listarPessoas(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanho,
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cpf,
+            @RequestParam(required = false) String grupo
+    ) {
+        Pageable pageable = PageRequest.of(pagina, tamanho, Sort.by("nome").ascending());
+        Page<ParticipanteTabelaDto> pessoas = pessoaService.listarPessoas(nome, cpf, grupo, pageable);
         return ResponseEntity.ok(pessoas);
     }
 

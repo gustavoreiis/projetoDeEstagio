@@ -7,7 +7,9 @@ import estagio.estagio.repository.PessoaRepository;
 import estagio.estagio.repository.PresencaRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,8 +70,10 @@ public class PessoaService {
 
         if (pessoa.getResponsavel() != null) atual.setResponsavel(pessoa.getResponsavel());
         if (pessoa.getTipo() != null) atual.setTipo(pessoa.getTipo());
-        if (pessoa.getSexo() != null) atual.setSexo(pessoa.getSexo());
         if (pessoa.getMinisterio() != null) atual.setMinisterio(pessoa.getMinisterio());
+        if (pessoa.getTipo() == Pessoa.TipoPessoa.PARTICIPANTE) atual.setMinisterio(null);
+        if (pessoa.getSexo() != null) atual.setSexo(pessoa.getSexo());
+
         if (pessoa.getObservacao() != null) atual.setObservacao(pessoa.getObservacao());
         if (pessoa.getAtivo() != null) {
             atual.setAtivo(pessoa.getAtivo());
@@ -92,31 +96,65 @@ public class PessoaService {
         return pessoaRepository.findLideresDisponiveis(idEncontro, tipo);
     }
 
-    public List<ParticipanteTabelaDto> listarPessoas() {
-        List<Pessoa> pessoas = pessoaRepository.findByAtivo(true);
+    public Page<ParticipanteTabelaDto> listarPessoas(String nome, String cpf, String grupo, Pageable pageable) {
 
-        return pessoas.stream().map(pessoa -> {
+        String nomeLike = (nome == null || nome.isBlank()) ? null : "%" + nome.toLowerCase() + "%";
+        String cpfLike  = (cpf == null || cpf.isBlank()) ? null : "%" + cpf + "%";
+
+        Pessoa.TipoPessoa tipo = null;
+        Pessoa.Ministerio ministerio = null;
+
+        if (grupo != null && !grupo.isBlank()) {
+            if (grupo.equalsIgnoreCase("Participante")) {
+                tipo = Pessoa.TipoPessoa.PARTICIPANTE;
+            }
+            else if (grupo.equalsIgnoreCase("Servo")) {
+                tipo = Pessoa.TipoPessoa.SERVO;
+            }
+            else {
+                try {
+                    ministerio = Arrays.stream(Pessoa.Ministerio.values())
+                            .filter(m -> m.getNomeFormatado().equalsIgnoreCase(grupo))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (ministerio != null) {
+                        tipo = Pessoa.TipoPessoa.SERVO;
+                    }
+
+                } catch (Exception ignored) {}
+            }
+        }
+
+        Page<Pessoa> page = pessoaRepository.buscarPessoas(
+                nomeLike,
+                cpfLike,
+                tipo,
+                ministerio,
+                pageable
+        );
+
+        return page.map(pessoa -> {
 
             int frequencia = presencaService.calcularFrequencia(pessoa.getId());
 
-            String grupo;
-            if (pessoa.getTipo() == Pessoa.TipoPessoa.SERVO) {
-                if (pessoa.getMinisterio() != null) grupo = pessoa.getMinisterio().getNomeFormatado();
-                else grupo = "Servo";
-            } else {
-                grupo = "Participante";
+            String grupoPessoa;
+            if (pessoa.getMinisterio() != null) {
+                grupoPessoa = pessoa.getMinisterio().getNomeFormatado();
             }
+            else
+                grupoPessoa = pessoa.getTipo().name().charAt(0) + pessoa.getTipo().name().substring(1).toLowerCase();
 
             return new ParticipanteTabelaDto(
                     pessoa.getId(),
                     pessoa.getNome(),
                     pessoa.getCpf(),
                     pessoa.getTelefone(),
-                    grupo,
+                    grupoPessoa,
                     pessoa.getNascimento(),
                     frequencia
             );
-        }).toList();
+        });
     }
 
     public Map<String, Object> buscarHistoricoPessoa(Long idPessoa) {

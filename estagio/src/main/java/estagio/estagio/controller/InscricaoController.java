@@ -47,12 +47,6 @@ public class InscricaoController {
         }
     }
 
-//    @DeleteMapping("/{idInscricao}")
-//    public ResponseEntity<Void> cancelarinscricao(@PathVariable Long idInscricao) {
-//        inscricaoService.cancelarInscricao(idInscricao);
-//        return ResponseEntity.noContent().build();
-//    }
-
     @GetMapping("/encontro/{idEncontro}")
     public ResponseEntity<List<InscricaoTabelaDto>> listarInscricoesEncontro(@PathVariable Long idEncontro) {
         List<InscricaoTabelaDto> inscricoes = inscricaoService.listarInscricoesTabela(idEncontro);
@@ -76,12 +70,6 @@ public class InscricaoController {
         inscricaoService.reenviarInformacoesPagamento(idInscricao);
         return ResponseEntity.noContent().build();
     }
-
-//    @GetMapping("/participante/{idPessoa}")
-//    public ResponseEntity<List<Inscricao>> listarPorPessoa(@PathVariable Long idPessoa) {
-//        List<Inscricao> inscricoes = inscricaoService.buscarInscricoesPorPessoa(idPessoa);
-//        return ResponseEntity.ok(inscricoes);
-//    }
 
 
     @PutMapping("/{idInscricao}")

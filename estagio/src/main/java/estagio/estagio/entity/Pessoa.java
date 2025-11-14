@@ -116,8 +116,19 @@ public class Pessoa implements UserDetails {
     }
 
     public enum TipoPessoa {
-        PARTICIPANTE,
-        SERVO
+        PARTICIPANTE("Participante"),
+        SERVO("Servo");
+
+        private final String nomeFormatado;
+
+        TipoPessoa(String nomeFormatado) {
+            this.nomeFormatado = nomeFormatado;
+        }
+
+        @JsonValue
+        public String getNomeFormatado() {
+            return nomeFormatado;
+        }
     }
 
     public enum StatusCoordenador {

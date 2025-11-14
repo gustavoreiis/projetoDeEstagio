@@ -97,12 +97,16 @@
     <div class="container my-3">
         <form id="formFiltros">
             <div class="row g-2">
-                <div class="col-12 col-md-10">
+                <div class="col-12 col-md-11 d-flex gap-2">
                     <input type="text" class="form-control" id="pesquisarNome" placeholder="Pesquisar por nome"
                         autocomplete="off">
+
+                    <button type="button" id="btnPesquisar" class="btn vermelho text-white vermelho-hover">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
 
-                <div class="col-12 col-md-2">
+                <div class="col-12 col-md-1">
                     <button class="btn btn-light text-dark w-100" type="button" data-bs-toggle="collapse"
                         data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
                         <i id="iconeCollapse" class="bi bi-caret-down-fill"></i> Filtros
@@ -220,8 +224,8 @@
                                 <label for="tipo" class="form-label required">Tipo</label>
                                 <select id="tipo" class="form-select" required>
                                     <option value="" selected disabled>Selecione o tipo</option>
-                                    <option value="PARTICIPANTE">Participante</option>
-                                    <option value="SERVO">Servo</option>
+                                    <option value="Participante">Participante</option>
+                                    <option value="Servo">Servo</option>
                                 </select>
                             </div>
 
