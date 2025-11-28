@@ -1,6 +1,6 @@
 package estagio.estagio.Service;
 
-import estagio.estagio.dto.ParticipanteDto;
+import estagio.estagio.dto.PessoaNomeDto;
 import estagio.estagio.entity.Grupo;
 import estagio.estagio.entity.Pessoa;
 import estagio.estagio.entity.PessoaGrupo;
@@ -28,28 +28,31 @@ public class PessoaGrupoService {
         this.encontroRepository = encontroRepository;
     }
 
-    public List<ParticipanteDto> listarParticipantesDoGrupo(Long idgrupo) {
+    public List<PessoaNomeDto> listarParticipantesDoGrupo(Long idgrupo) {
         if (grupoRepository.findById(idgrupo).isEmpty()) {
             throw new RuntimeException("Grupo não encontrado");
         }
 
         List<PessoaGrupo> listaPessoaGrupo = pessoaGrupoRepository.findByGrupoIdAndLiderFalse(idgrupo);
-        List<ParticipanteDto> listaParticipantes = new ArrayList<>();
+        List<PessoaNomeDto> listaParticipantes = new ArrayList<>();
 
         for (PessoaGrupo pessoaGrupo : listaPessoaGrupo) {
             Pessoa participante = pessoaGrupo.getPessoa();
-            ParticipanteDto participanteDto = new ParticipanteDto(participante.getId(), participante.getNome());
-            listaParticipantes.add(participanteDto);
+            PessoaNomeDto pessoaNomeDto = new PessoaNomeDto(participante.getId(), participante.getNome());
+            listaParticipantes.add(pessoaNomeDto);
         }
         return listaParticipantes;
     }
 
-    public List<ParticipanteDto> listarParticipantesSemGrupo(Long idEncontro) {
-        if (encontroRepository.findById(idEncontro).isEmpty()) {
-            throw new RuntimeException("Encontro não encontrado");
-        }
+    public List<PessoaNomeDto> listarParticipantesSemGrupo(Long idEncontro) {
+        List<Object[]> lista = pessoaGrupoRepository.findParticipantesSemGrupo(idEncontro);
 
-        return pessoaGrupoRepository.findParticipantesSemGrupo(idEncontro);
+        return lista.stream()
+                .map(obj -> new PessoaNomeDto(
+                        ((Number) obj[0]).longValue(), // id_pessoa
+                        (String) obj[1]                // nome
+                ))
+                .toList();
     }
 
     public PessoaGrupo adicionarPessoa(Long idPessoa, Long idGrupo) {

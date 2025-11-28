@@ -4,9 +4,13 @@ import estagio.estagio.Service.AtividadeService;
 import estagio.estagio.dto.AtividadeDto;
 import estagio.estagio.dto.PessoaPresencaDto;
 import estagio.estagio.entity.Atividade;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,9 +23,16 @@ public class AtividadeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Atividade>> listarAtividades() {
-        List<Atividade> atividades = atividadeService.listarAtividades();
-        return ResponseEntity.ok(atividades);
+    public ResponseEntity<Page<Atividade>> listarAtividades(
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String grupo,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            Pageable pageable
+    ) {
+        Page<Atividade> page = atividadeService.listarAtividades(descricao, grupo, status, dataInicio, dataFim, pageable);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping

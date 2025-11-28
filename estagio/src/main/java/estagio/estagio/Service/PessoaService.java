@@ -88,12 +88,15 @@ public class PessoaService {
         pessoaRepository.findById(id).ifPresent(pessoaRepository::delete);
     }
 
-    public Optional<Pessoa> findByCpf(String cpf) {
-        return pessoaRepository.findPessoaByCpf(cpf);
-    }
+    public List<PessoaNomeDto> buscarLideres(Long idEncontro, Pessoa.TipoPessoa tipo) {
+        List<Pessoa> pessoas = pessoaRepository.findLideresDisponiveis(idEncontro, tipo);
 
-    public List<Pessoa> buscarLideres(Long idEncontro, Pessoa.TipoPessoa tipo) {
-        return pessoaRepository.findLideresDisponiveis(idEncontro, tipo);
+        List<PessoaNomeDto> lideres = new ArrayList<>();
+        for (Pessoa pessoa : pessoas) {
+            PessoaNomeDto lider = new PessoaNomeDto(pessoa.getId(), pessoa.getNome());
+            lideres.add(lider);
+        }
+        return lideres;
     }
 
     public Page<ParticipanteTabelaDto> listarPessoas(String nome, String cpf, String grupo, Pageable pageable) {

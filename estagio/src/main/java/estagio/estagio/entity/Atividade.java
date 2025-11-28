@@ -3,6 +3,7 @@ package estagio.estagio.entity;
 import com.fasterxml.jackson.annotation.JsonValue;
 import estagio.estagio.dto.AtividadeDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "atividades")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Atividade {

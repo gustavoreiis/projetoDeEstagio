@@ -69,7 +69,8 @@ public class EncontroService {
                                       LocalDateTime dataHoraFim,
                                       String local,
                                       float preco,
-                                      MultipartFile capa) throws IOException {
+                                      MultipartFile capa,
+                                      boolean aberto) throws IOException {
 
         Encontro encontro = encontroRepository.findById(idEncontro)
                 .orElseThrow(() -> new EntityNotFoundException("Encontro não encontrado"));
@@ -80,6 +81,7 @@ public class EncontroService {
         encontro.setDataHoraFim(dataHoraFim);
         encontro.setLocal(local);
         encontro.setPreco(preco);
+        encontro.setAberto(aberto);
 
         if (capa != null && !capa.isEmpty()) {
             arquivoService.deletarArquivo(encontro.getCapa());

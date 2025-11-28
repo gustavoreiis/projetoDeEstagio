@@ -1,7 +1,7 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.PessoaGrupoService;
-import estagio.estagio.dto.ParticipanteDto;
+import estagio.estagio.dto.PessoaNomeDto;
 import estagio.estagio.entity.PessoaGrupo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,14 +20,14 @@ public class PessoaGrupoController {
     }
 
     @GetMapping("/{idGrupo}")
-    public ResponseEntity<List<ParticipanteDto>> listarParticipantesDoGrupo(@PathVariable Long idGrupo) {
-        List<ParticipanteDto> listaParticipantes = pessoaGrupoService.listarParticipantesDoGrupo(idGrupo);
+    public ResponseEntity<List<PessoaNomeDto>> listarParticipantesDoGrupo(@PathVariable Long idGrupo) {
+        List<PessoaNomeDto> listaParticipantes = pessoaGrupoService.listarParticipantesDoGrupo(idGrupo);
         return ResponseEntity.ok(listaParticipantes);
     }
 
     @GetMapping("encontro/{idEncontro}")
-    public ResponseEntity<List<ParticipanteDto>> listarParticipantesSemGrupo(@PathVariable Long idEncontro) {
-        List<ParticipanteDto> listaParticipantes = pessoaGrupoService.listarParticipantesSemGrupo(idEncontro);
+    public ResponseEntity<List<PessoaNomeDto>> listarParticipantesSemGrupo(@PathVariable Long idEncontro) {
+        List<PessoaNomeDto> listaParticipantes = pessoaGrupoService.listarParticipantesSemGrupo(idEncontro);
         return ResponseEntity.ok(listaParticipantes);
     }
 

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,7 +96,7 @@ public class InscricaoService {
                 .orElseThrow(() -> new RuntimeException("Inscrição não encontrada"));
 
         Pessoa pessoa = pessoaRepository.findById(inscricao.getPessoa().getId())
-                        .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
 
         inscricao.setPago(request.isPago());
         inscricao.setAutorizado(request.isAutorizado());
@@ -172,33 +173,60 @@ public class InscricaoService {
         }
     }
 
-    public void cancelarInscricao(Long inscricaoId) {
-        inscricaoRepository.deleteById(inscricaoId);
-    }
-
-    public List<InscricaoTabelaDto> listarInscricoesTabela(Long encontroId) {
+    public List<InscricaoTabelaDto> listarInscricoesTabela(Long encontroId, String nome, String grupo, String pagamento) {
         List<Inscricao> inscricoes = inscricaoRepository.findByEncontroId(encontroId);
+        return inscricoes.stream()
+                .filter(inscricao -> nome == null || nome.isBlank() ||
+                        inscricao.getPessoa().getNome().toLowerCase().contains(nome.toLowerCase()))
+                .filter(i -> {
+                    if (grupo == null || grupo.isBlank()) return true;
 
-        return inscricoes.stream().map(inscricao -> {
-            var pessoa = inscricao.getPessoa();
+                    Pessoa p = i.getPessoa();
+                    if (grupo.equals("Participante")) {
+                        return p.getTipo() == Pessoa.TipoPessoa.PARTICIPANTE;
+                    }
+                    if (grupo.equals("Servo")) {
+                        return p.getTipo() == Pessoa.TipoPessoa.SERVO;
+                    }
+                    if (p.getMinisterio() != null) {
+                        return p.getMinisterio().getNomeFormatado().equals(grupo);
+                    }
+                    return false;
+                })
+                .filter(i -> {
+                    if (pagamento == null || pagamento.isBlank()) return true;
 
-            String grupo = pessoa.getTipo() == Pessoa.TipoPessoa.SERVO
-                    ? String.valueOf(pessoa.getMinisterio().getNomeFormatado())
-                    : "Participante";
+                    String status = i.isPago() ? "Concluído" : "Pendente";
+                    return status.equals(pagamento);
+                })
+                .map(i -> {
+                    Pessoa p = i.getPessoa();
 
-            return new InscricaoTabelaDto(
-                    inscricao.getId(),
-                    pessoa.getNome(),
-                    pessoa.getTelefone(),
-                    grupo,
-                    inscricao.isPago() ? "Concluído" : "Pendente",
-                    pessoa.getNascimento()
-            );
-        }).toList();
-    }
 
-    public List<Inscricao> buscarInscricoesPorPessoa(Long pessoaId) {
-        return inscricaoRepository.findByPessoaId(pessoaId);
+                    String grupoPessoa;
+                    if (p.getTipo() == Pessoa.TipoPessoa.PARTICIPANTE) {
+                        grupoPessoa = "Participante";
+                    } else if (p.getTipo() == Pessoa.TipoPessoa.SERVO) {
+                        if (p.getMinisterio() != null) {
+                            grupoPessoa = p.getMinisterio().getNomeFormatado();
+                        } else {
+                            grupoPessoa = "Servo";
+                        }
+                    } else {
+                        grupoPessoa = "Não informado";
+                    }
+
+                    return new InscricaoTabelaDto(
+                            i.getId(),
+                            p.getNome(),
+                            p.getTelefone(),
+                            grupoPessoa,
+                            i.isPago() ? "Concluído" : "Pendente",
+                            p.getNascimento()
+                    );
+                })
+                .sorted(Comparator.comparing(dto -> dto.getNome().toLowerCase()))
+                .toList();
     }
 
     public List<Inscricao> listarTodasInscricoes(Long encontroId) {

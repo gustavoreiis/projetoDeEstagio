@@ -1,10 +1,7 @@
 package estagio.estagio.controller;
 
 import estagio.estagio.Service.PessoaService;
-import estagio.estagio.dto.DetalhesPessoaDto;
-import estagio.estagio.dto.ParticipanteTabelaDto;
-import estagio.estagio.dto.PessoaStatusDto;
-import estagio.estagio.dto.SolicitacaoAtualizacaoCoordenadorDto;
+import estagio.estagio.dto.*;
 import estagio.estagio.entity.Pessoa;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +127,7 @@ public class PessoaController {
     }
 
     @GetMapping("/lideres/{idEncontro}")
-    public ResponseEntity<List<Pessoa>> buscarServos(@PathVariable Long idEncontro) {
+    public ResponseEntity<List<PessoaNomeDto>> buscarServos(@PathVariable Long idEncontro) {
         return ResponseEntity.ok(pessoaService.buscarLideres(idEncontro, Pessoa.TipoPessoa.SERVO));
     }
 

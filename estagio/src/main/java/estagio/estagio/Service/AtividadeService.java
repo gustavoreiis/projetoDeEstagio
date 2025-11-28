@@ -9,8 +9,12 @@ import estagio.estagio.repository.AtividadeRepository;
 import estagio.estagio.repository.PessoaRepository;
 import estagio.estagio.repository.PresencaRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,8 +32,41 @@ public class AtividadeService {
         this.presencaRepository = presencaRepository;
     }
 
-    public List<Atividade> listarAtividades() {
-        return atividadeRepository.findAll();
+    public Page<Atividade> listarAtividades(
+            String descricao,
+            String grupo,
+            String status,
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            Pageable pageable) {
+
+        String descricaoLike = (descricao == null || descricao.isBlank()) ? "%" : "%" + descricao + "%";
+
+        Atividade.GrupoDePessoas grupoEnum = null;
+        if (grupo != null && !grupo.isBlank()) {
+            grupoEnum = Arrays.stream(Atividade.GrupoDePessoas.values())
+                    .filter(g -> g.getNomeFormatado().equalsIgnoreCase(grupo))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        Boolean statusBool = null;
+        if (status != null && !status.isBlank()) {
+            if (status.equalsIgnoreCase("true")) {
+                statusBool = true;
+            } else if (status.equalsIgnoreCase("false")) {
+                statusBool = false;
+            }
+        }
+
+        return atividadeRepository.buscarAtividades(
+                descricaoLike,
+                grupoEnum,
+                statusBool,
+                dataInicio,
+                dataFim,
+                pageable
+        );
     }
 
     public Atividade criarAtividade(AtividadeDto atividadeDto) {
@@ -70,11 +107,11 @@ public class AtividadeService {
         List<Pessoa> pessoas;
 
         if (atividade.getGrupoDePessoas() == Atividade.GrupoDePessoas.PARTICIPANTE) {
-            pessoas = pessoaRepository.findByTipo(Pessoa.TipoPessoa.PARTICIPANTE);
+            pessoas = pessoaRepository.findByTipoAndAtivoTrue(Pessoa.TipoPessoa.PARTICIPANTE);
         } else if (atividade.getGrupoDePessoas() == Atividade.GrupoDePessoas.SERVO) {
-            pessoas = pessoaRepository.findByTipo(Pessoa.TipoPessoa.SERVO);
+            pessoas = pessoaRepository.findByTipoAndAtivoTrue(Pessoa.TipoPessoa.SERVO);
         } else {
-            pessoas = pessoaRepository.findByMinisterio(
+            pessoas = pessoaRepository.findByMinisterioAndAtivoTrue(
                     Pessoa.Ministerio.valueOf(atividade.getGrupoDePessoas().name())
             );
         }

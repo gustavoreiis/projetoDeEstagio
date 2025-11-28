@@ -56,11 +56,12 @@ public class EncontroController {
             @RequestParam LocalDateTime dataHoraFim,
             @RequestParam String local,
             @RequestParam float preco,
-            @RequestParam(value = "capa", required = false) MultipartFile capa) {
+            @RequestParam(value = "capa", required = false) MultipartFile capa,
+            @RequestParam(required = false) boolean aberto) {
 
         try {
             Encontro encontroAtualizado = encontroService.atualizarEncontro(
-                    idEncontro, titulo, descricao, dataHoraInicio, dataHoraFim, local, preco, capa);
+                    idEncontro, titulo, descricao, dataHoraInicio, dataHoraFim, local, preco, capa, aberto);
             return ResponseEntity.ok(encontroAtualizado);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Encontro não encontrado");

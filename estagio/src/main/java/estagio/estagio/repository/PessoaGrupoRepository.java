@@ -1,6 +1,5 @@
 package estagio.estagio.repository;
 
-import estagio.estagio.dto.ParticipanteDto;
 import estagio.estagio.entity.PessoaGrupo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PessoaGrupoRepository extends JpaRepository<PessoaGrupo, Long> {
-    List<PessoaGrupo> findByGrupoId(Long idGrupo);
     List<PessoaGrupo> findBygrupoIdAndLiderTrue(Long idGrupo);
     boolean existsByPessoaIdAndGrupoEncontroIdAndLiderTrue(Long idPessoa, Long idGrupo);
     List<PessoaGrupo> findByGrupoIdAndLiderFalse(Long idGrupo);
@@ -26,5 +24,5 @@ public interface PessoaGrupoRepository extends JpaRepository<PessoaGrupo, Long> 
             "   JOIN grupos g ON pg.id_grupo = g.id_grupo " +
             "   WHERE g.id_encontro = :idEncontro )",
             nativeQuery = true)
-    List<ParticipanteDto> findParticipantesSemGrupo(@Param("idEncontro") Long idEncontro);
+    List<Object[]> findParticipantesSemGrupo(@Param("idEncontro") Long idEncontro);
 }

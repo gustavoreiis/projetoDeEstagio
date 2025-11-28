@@ -5,9 +5,9 @@ function previewImage(event) {
     const preview = document.getElementById('preview');
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             preview.src = e.target.result;
-            preview.style.display = 'block'; 
+            preview.style.display = 'block';
         };
         reader.readAsDataURL(input.files[0]);
     } else {
@@ -16,24 +16,24 @@ function previewImage(event) {
     }
 }
 
-window.addEventListener('DOMContentLoaded', function() {
-  const params = new URLSearchParams(window.location.search);
-  const idEncontro = params.get('id');
+window.addEventListener('DOMContentLoaded', function () {
+    const params = new URLSearchParams(window.location.search);
+    const idEncontro = params.get('id');
 
-  if (idEncontro) {
-    carregarEncontroParaEdicao(idEncontro);
-  }
+    if (idEncontro) {
+        carregarEncontroParaEdicao(idEncontro);
+    }
 
-  const agora = new Date();
+    const agora = new Date();
     const offset = agora.getTimezoneOffset();
     const agoraLocal = new Date(agora.getTime() - (offset * 60000))
-                         .toISOString()
-                         .slice(0,16);
+        .toISOString()
+        .slice(0, 16);
 
     document.getElementById('dataHoraInicio').setAttribute('min', agoraLocal);
     document.getElementById('dataHoraFim').setAttribute('min', agoraLocal);
 
-    this.document.getElementById('dataHoraInicio').addEventListener('change', function() {
+    this.document.getElementById('dataHoraInicio').addEventListener('change', function () {
         const dataHoraInicio = new Date(this.value);
         const dataHoraFimInput = document.getElementById('dataHoraFim');
         dataHoraFimInput.setAttribute('min', this.value);
@@ -41,23 +41,24 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 function carregarEncontroParaEdicao(idEncontro) {
-  fetch(`http://localhost:8080/encontros/${idEncontro}`)
-    .then(response => response.json())
-    .then(encontro => {
-      document.getElementById('idEncontro').value = encontro.idEncontro;
-      document.getElementById('titulo').value = encontro.titulo;
-      document.getElementById('descricao').value = encontro.descricao;
-      document.getElementById('dataHoraInicio').value = encontro.dataHoraInicio;
-      document.getElementById('dataHoraFim').value = encontro.dataHoraFim;
-      document.getElementById('local').value = encontro.local;
-      document.getElementById('preco').value = encontro.preco;
-      document.getElementById('titulo-form').innerHTML = "Editar Encontro";
-      document.getElementById('capa').removeAttribute('required');
-      const preview = document.getElementById('preview');
-      preview.src = encontro.capa;
-      preview.style.display = 'block';
-    })
-    .catch(error => console.error('Erro ao carregar o encontro:', error));
+    fetch(`http://localhost:8080/encontros/${idEncontro}`)
+        .then(response => response.json())
+        .then(encontro => {
+            document.getElementById("btn-encerrar").classList.remove("d-none");
+            document.getElementById('idEncontro').value = encontro.idEncontro;
+            document.getElementById('titulo').value = encontro.titulo;
+            document.getElementById('descricao').value = encontro.descricao;
+            document.getElementById('dataHoraInicio').value = encontro.dataHoraInicio;
+            document.getElementById('dataHoraFim').value = encontro.dataHoraFim;
+            document.getElementById('local').value = encontro.local;
+            document.getElementById('preco').value = encontro.preco;
+            document.getElementById('titulo-form').innerHTML = "Editar Encontro";
+            document.getElementById('capa').removeAttribute('required');
+            const preview = document.getElementById('preview');
+            preview.src = encontro.capa;
+            preview.style.display = 'block';
+        })
+        .catch(error => console.error('Erro ao carregar o encontro:', error));
 }
 
 function salvarEncontro(event) {
@@ -82,6 +83,7 @@ function salvarEncontro(event) {
     formData.append("dataHoraFim", document.getElementById("dataHoraFim").value);
     formData.append("local", document.getElementById("local").value);
     formData.append("preco", document.getElementById("preco").value);
+    formData.append("aberto", true);
 
     const inputCapa = document.getElementById("capa");
     if (inputCapa.files && inputCapa.files.length > 0) {
@@ -97,20 +99,49 @@ function salvarEncontro(event) {
         method: method,
         body: formData
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Erro ao salvar o encontro.");
-        }
-        return response.text();
-    })
-    .then(() => {
-        window.location.href = "encontros.html";
-    })
-    .catch(error => {
-        console.error("Erro ao salvar o encontro:", error);
-        alert("Erro ao salvar o encontro.");
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erro ao salvar o encontro.");
+            }
+            return response.text();
+        })
+        .then(() => {
+            window.location.href = "encontros.html";
+        })
+        .catch(error => {
+            console.error("Erro ao salvar o encontro:", error);
+            alert("Erro ao salvar o encontro.");
+        });
 }
+
+document.getElementById("btn-encerrar").addEventListener("click", encerrarEncontro);
+function encerrarEncontro() {
+    const params = new URLSearchParams(window.location.search);
+    const idEncontro = params.get("id");
+    console.log(idEncontro);
+
+    const formData = new FormData();
+
+    formData.append("titulo", document.getElementById("titulo").value);
+    formData.append("descricao", document.getElementById("descricao").value);
+    formData.append("dataHoraInicio", document.getElementById("dataHoraInicio").value);
+    formData.append("dataHoraFim", document.getElementById("dataHoraFim").value);
+    formData.append("local", document.getElementById("local").value);
+    formData.append("preco", document.getElementById("preco").value);
+    formData.append("aberto", false);
+
+    fetch(`http://localhost:8080/encontros/${idEncontro}`, {
+        method: "PUT",
+        body: formData
+    })
+        .then(() => {
+            window.location.href = "encontros.html";
+        })
+        .catch(err => {
+            console.error(err);
+        });
+}
+
 
 function mostrarErroData(mensagem) {
     const mensagemErroData = document.getElementById("mensagemErroData");

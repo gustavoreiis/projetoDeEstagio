@@ -8,15 +8,13 @@ let paginaAtual = 0;
 const tamanhoPagina = 10;
 
 document.getElementById("btnPesquisar").addEventListener("click", () => {
-    console.log("teste");
     carregarPessoas();
 });
 
 async function carregarPessoas() {
     const nome = campoNome.value.trim();
-    const cpf = campoCpf.value.trim();
+    const cpf = limparFormatacao(campoCpf.value.trim());
     const grupo = filtroGrupo.value.trim();
-    console.log(grupo);
 
     const params = new URLSearchParams({
         pagina: paginaAtual,

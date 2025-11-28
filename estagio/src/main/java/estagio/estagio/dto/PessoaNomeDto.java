@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ParticipanteDto {
+public class PessoaNomeDto {
     private Long id;
     private String nome;
 
-    public ParticipanteDto(Long id, String nome) {
+    public PessoaNomeDto(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }

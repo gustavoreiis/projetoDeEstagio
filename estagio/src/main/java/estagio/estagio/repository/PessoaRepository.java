@@ -22,9 +22,9 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
 
     Optional<Pessoa> findPessoaByCpf(String cpf);
 
-    List<Pessoa> findByTipo(Pessoa.TipoPessoa tipo);
+    List<Pessoa> findByTipoAndAtivoTrue(Pessoa.TipoPessoa tipo);
 
-    List<Pessoa> findByMinisterio(Pessoa.Ministerio ministerio);
+    List<Pessoa> findByMinisterioAndAtivoTrue(Pessoa.Ministerio ministerio);
 
     List<Pessoa> findByCoordenadorIsNotNull();
 

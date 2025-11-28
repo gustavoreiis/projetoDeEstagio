@@ -166,10 +166,13 @@
     <div class="container my-3">
         <form id="formFiltros">
             <div class="row g-2">
-                <div class="col-12 col-md-10">
+                <div class="col-12 col-md-11 d-flex gap-2">
                     <input type="text" class="form-control" id="pesquisarInput" placeholder="Pesquisar atividade">
+                    <button type="button" id="btnPesquisar" class="btn vermelho text-white vermelho-hover">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
-                <div class="col-12 col-md-2">
+                <div class="col-12 col-md-1">
                     <button class="btn btn-light text-dark w-100" type="button" data-bs-toggle="collapse"
                         data-bs-target="#pesquisaCollapse" aria-expanded="false" aria-controls="pesquisaCollapse">
                         <i id="iconeCollapse" class="bi bi-caret-down-fill"></i> Filtros
@@ -224,11 +227,12 @@
     </div>
 
     <div class="container mt-4 mb-4">
+        <div id="lista-atividades" class="row g-3"></div>
+        <div id="paginacao" class="d-flex justify-content-center align-items-center mt-3"></div>
         <div id="lista-vazio" class="text-center py-5 d-none">
             <i class="bi bi-person-lines-fill"></i>
             <p class="text-secondary">Nenhuma atividade encontrada</p>
         </div>
-        <div id="lista-atividades" class="row g-3"></div>
     </div>
 
     <script src="../scripts/auth.js"></script>

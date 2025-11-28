@@ -48,8 +48,12 @@ public class InscricaoController {
     }
 
     @GetMapping("/encontro/{idEncontro}")
-    public ResponseEntity<List<InscricaoTabelaDto>> listarInscricoesEncontro(@PathVariable Long idEncontro) {
-        List<InscricaoTabelaDto> inscricoes = inscricaoService.listarInscricoesTabela(idEncontro);
+    public ResponseEntity<List<InscricaoTabelaDto>> listarInscricoesEncontro(
+            @PathVariable Long idEncontro,
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String grupo,
+            @RequestParam(required = false) String pagamento) {
+        List<InscricaoTabelaDto> inscricoes = inscricaoService.listarInscricoesTabela(idEncontro, nome, grupo, pagamento);
         return ResponseEntity.ok(inscricoes);
     }
 

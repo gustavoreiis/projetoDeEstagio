@@ -36,11 +36,14 @@
         </div>
         <div class="offcanvas-body d-flex justify-content-center">
             <ul class="nav flex-column fs-5">
-                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a></li>
+                <li class="nav-item "><a class="nav-link text-white text-center" href="encontros.html">Encontros</a>
+                </li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="participantes.html">Participantes</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center"
+                        href="participantes.html">Participantes</a></li>
                 <hr class="text-white">
-                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a></li>
+                <li class="nav-item"><a class="nav-link text-white text-center" href="atividades.html">Atividades</a>
+                </li>
             </ul>
         </div>
         <div
@@ -88,12 +91,12 @@
                             </div>
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="capa" class="form-label required">Capa</label>
-                                <input class="form-control vermelho-border" type="file" id="capa" name="capa" required accept="image/*"
-                                    onchange="previewImage(event)">
+                                <input class="form-control vermelho-border" type="file" id="capa" name="capa" required
+                                    accept="image/*" onchange="previewImage(event)">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="descricao" class="form-label required">Descrição</label>
+                            <label for="descricao" class="form-label">Descrição</label>
                             <textarea class="form-control" id="descricao" name="descricao" rows="4"
                                 maxlength="1000"></textarea>
                         </div>
@@ -106,6 +109,9 @@
                         <div class="text-end">
                             <button id="btn-salvar" type="submit" class="btn vermelho vermelho-hover text-white me-2">
                                 Cadastrar
+                            </button>
+                            <button id="btn-encerrar" type="button" class="btn btn-secondary me-2 d-none">
+                                Encerrar
                             </button>
                             <a href="encontros.html" class="btn btn-secondary">Cancelar</a>
                         </div>
