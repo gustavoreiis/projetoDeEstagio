@@ -47,6 +47,7 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
                   AND (:cpf IS NULL OR p.cpf LIKE :cpf)
                   AND (:tipo IS NULL OR p.tipo = :tipo)
                   AND (:ministerio IS NULL OR p.ministerio = :ministerio)
+                ORDER BY p.nome ASC
             """)
     Page<Pessoa> buscarPessoas(
             @Param("nome") String nome,

@@ -30,6 +30,7 @@ public class PessoaService {
 
     public Pessoa criarPessoa(Pessoa pessoa) {
         validarCpf(pessoa.getCpf());
+        pessoa.setAtivo(true);
         return pessoaRepository.save(pessoa);
     }
 

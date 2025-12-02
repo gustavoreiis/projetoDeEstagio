@@ -292,7 +292,7 @@ async function abrirModalPresenca(idAtividade) {
     })
 
     document.getElementById('modalPresencaLabel').textContent = `Registrar Presenças - ${atividade.descricao}`;
-    document.getElementById('atividadeData').innerHTML = `<strong>Data:</strong> ${atividade.dataAtividade}   `;
+    document.getElementById('atividadeData').innerHTML = `<strong>Data:</strong> ${formatarData(atividade.dataAtividade)}   `;
     document.getElementById('atividadeGrupo').innerHTML = `<strong>Grupo:</strong> ${atividade.grupoDePessoas}`;
     document.getElementById('idAtividadePresenca').value = idAtividade;
     const modalPresenca = new bootstrap.Modal(document.getElementById('modalPresenca'));
